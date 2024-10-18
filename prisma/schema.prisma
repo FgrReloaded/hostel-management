@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Student {
+  id               String   @id @default(cuid())
+  name             String
+  email            String   @unique
+  password         String
+  phone            String   @unique
+  roomNumber       String?
+  profileSetup     Boolean  @default(false)
+  isRegistered     Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  parent           Parent?
+  address          String?
+  complaints       Complaint[]
+  payments         Payment[]
+  alertReceipts    AlertReceipt[]
+  role             Role     @default(STUDENT)
+  notificationReceipts NotificationReceipt[]
+  registrationRequest RegistrationRequest?
+}
+
+model Parent {
+  id         String   @id @default(cuid())
+  name       String
+  email      String   @unique
+  phone      String   @unique
+  student    Student  @relation(fields: [studentId], references: [id])
+  studentId  String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model HostelStaff {
+  id           String   @id @default(cuid())
+  name         String
+  email            String   @unique
+  password         String
+  role         Role   @default(ADMIN)
+  contactInfo  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Alert {
+  id        BigInt   @id @default(autoincrement())
+  message   String
+  isGlobal  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  receipts  AlertReceipt[]
+}
+
+model AlertReceipt {
+  id        BigInt   @id @default(autoincrement())
+  alert     Alert    @relation(fields: [alertId], references: [id])
+  alertId   BigInt
+  student   Student  @relation(fields: [studentId], references: [id])
+  studentId String
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@unique([alertId, studentId])
+}
+
+model Notification {
+  id        BigInt   @id @default(autoincrement())
+  message   String
+  isGlobal  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  receipts  NotificationReceipt[]
+}
+
+model NotificationReceipt {
+  id             BigInt       @id @default(autoincrement())
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  notificationId BigInt
+  student        Student      @relation(fields: [studentId], references: [id])
+  studentId      String
+  readAt         DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@unique([notificationId, studentId])
+}
+
+model Complaint {
+  id            BigInt   @id @default(autoincrement())
+  student       Student  @relation(fields: [studentId], references: [id])
+  studentId     String
+  complaintText String
+  status        String   @default("Pending")
+  createdAt     DateTime @default(now())
+}
+
+model Payment {
+  id                 BigInt   @id @default(autoincrement())
+  student            Student  @relation(fields: [studentId], references: [id])
+  studentId          String
+  amount             Float
+  month              Int?
+  year               Int?
+  status             String   @default("Pending")
+  screenshotImageUrl String?
+  ownerReceiptUrl    String?
+  paymentMethod      String
+  isVerified         Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([studentId, month, year])
+}
+
+model RegistrationRequest {
+  id        String   @id @default(cuid())
+  student   Student  @relation(fields: [studentId], references: [id])
+  studentId String   @unique
+  status    RequestStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+}

@@ -14,7 +14,7 @@ export async function getAllPayments(): Promise<{ error: boolean; msg: string; d
   try {
     const session = await auth();
 
-    if (!session && session?.user?.role !== "ADMIN") {
+    if (!session || session?.user?.role !== "ADMIN") {
       return { error: true, msg: "Unauthorized" };
     }
 
@@ -121,7 +121,7 @@ export async function updatePaymentStatus(id: number, status: string, room: stri
       return { error: true, msg: "Invalid data" };
     }
 
-    if (!session && session?.user?.role !== "ADMIN") {
+    if (!session || session?.user?.role !== "ADMIN") {
       return { error: true, msg: "Unauthorized" };
     }
 

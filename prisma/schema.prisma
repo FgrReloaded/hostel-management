@@ -126,6 +126,21 @@ model RegistrationRequest {
   updatedAt DateTime @updatedAt
 }
 
+model PaymentMethod {
+  id          BigInt   @id @default(autoincrement())
+  type        ModeType
+  upiId       String?
+  beneficiaryName String?
+  accountNumber String?
+  ifsc        String?
+  qrcode      String?
+  bankName    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
 enum RequestStatus {
   PENDING
   APPROVED
@@ -135,4 +150,11 @@ enum RequestStatus {
 enum Role {
   ADMIN
   STUDENT
+}
+
+enum ModeType {
+  UPI
+  NETBANKING
+  CASH
+  QR
 }

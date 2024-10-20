@@ -9,7 +9,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Label } from "../ui/label"
-import { Input } from "@/components/ui/input"
 import { AlertCircle } from 'lucide-react'
 import { CldUploadWidget } from 'next-cloudinary';
 import Image from 'next/image';

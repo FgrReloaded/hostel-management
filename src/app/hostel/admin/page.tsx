@@ -1,40 +1,34 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { AlertCircle, UserPlus, Bell, Home, Users, DollarSign, FileText, Settings, MessageSquare } from "lucide-react"
+import { UserPlus, Home, Users, DollarSign, FileText, Settings, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { motion } from "framer-motion"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { signOut, useSession } from "next-auth/react"
+import { signOut } from "next-auth/react"
 import { ExitIcon } from "@radix-ui/react-icons"
 import Student from "@/components/admin/Student"
 import Reports from "@/components/admin/Reports"
 import PaymentHistory from "@/components/admin/PaymentHistory"
 import Complaints from "@/components/student/Complaints"
-import { Payment as PaymentType, Student as StudentType} from "@prisma/client"
+import { Payment as PaymentType, Student as StudentType } from "@prisma/client"
 import { getAllPayments } from "@/actions/payments/payment"
 import { toast } from "sonner"
 import { useRouter, useSearchParams } from "next/navigation"
 import RegistrationRequest from "@/components/admin/RegistrationRequests"
 import { getAllStudents } from "@/actions/admin/student"
+import SettingsPage from "@/components/admin/Settings"
+import Stats from "@/components/admin/Stats"
 
 
 export default function OwnerDashboard() {
   const searchParams = useSearchParams()
   const [activeView, setActiveView] = useState("overview")
-  const [selectedStudent, setSelectedStudent] = useState(null)
+  const [selectedStudent, setSelectedStudent] = useState<StudentType| null>(null)
   const [paymentHistory, setPaymentHistory] = useState<PaymentType[]>([]);
   const [students, setStudents] = useState<StudentType[]>([]);
   const router = useRouter();
-
-
-  const paymentOverview = {
-    totalRevenue: 15000,
-    pendingPayments: 5,
-    paidStudents: 45,
-    unpaidStudents: 5,
-  }
 
 
   const monthlyIncome = [
@@ -66,7 +60,7 @@ export default function OwnerDashboard() {
         toast.error(msg);
         return;
       }
-      if(!data) {
+      if (!data) {
         return;
       }
       setPaymentHistory(data);
@@ -75,52 +69,31 @@ export default function OwnerDashboard() {
 
   useEffect(() => {
     (async () => {
-      const {error, data} = await getAllStudents();
-      if(error) {
+      const { error, data } = await getAllStudents();
+      if (error) {
         toast.error("Something went wrong");
         return;
       }
-      if(!data) return;
+      if (!data) return;
 
       setStudents(data);
 
     })();
   }, []);
 
-
   const renderView = () => {
     switch (activeView) {
       case "overview":
         return (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {[
-              { title: "Total Revenue", icon: DollarSign, value: `₹${paymentOverview.totalRevenue * 75}`, description: "This month" },
-              { title: "Pending Payments", icon: Bell, value: paymentOverview.pendingPayments, description: "Students with due payments" },
-              { title: "Paid Students", icon: Users, value: paymentOverview.paidStudents, description: `Out of ${paymentOverview.paidStudents + paymentOverview.unpaidStudents}` },
-              { title: "Unpaid Students", icon: AlertCircle, value: paymentOverview.unpaidStudents, description: "Requires attention" },
-            ].map((item, index) => (
-              <motion.div key={index} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Card className="bg-white hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
-                    <item.icon className="h-4 w-4 text-indigo-600" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-indigo-700">{item.value}</div>
-                    <p className="text-xs text-muted-foreground">{item.description}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+          <Stats students={students} />
         )
       case "students":
         return (
-          <Student setActiveView={setActiveView} students={students} setSelectedStudent={setSelectedStudent}  />
+          <Student setActiveView={setActiveView} students={students} setSelectedStudent={setSelectedStudent} />
         )
       case "reports":
         return (
-       <Reports monthlyIncome={monthlyIncome} />
+          <Reports monthlyIncome={monthlyIncome} />
         )
       case "history":
         return (
@@ -128,7 +101,7 @@ export default function OwnerDashboard() {
         )
 
       case "request":
-        return <RegistrationRequest paymentHistory={paymentHistory} />
+        return <RegistrationRequest />
       case "studentProfile":
         if (!selectedStudent) return null
         return (
@@ -176,7 +149,7 @@ export default function OwnerDashboard() {
           <Complaints />
         )
       default:
-        return null
+        return <SettingsPage />
     }
   }
 
@@ -210,9 +183,11 @@ export default function OwnerDashboard() {
                 {label}
               </Button>
             ))}
-            <Button variant="ghost" className="w-full justify-start text-red-500" onClick={()=>{signOut({
-              redirectTo: "/"
-            })}}>
+            <Button variant="ghost" className="w-full justify-start text-red-500" onClick={() => {
+              signOut({
+                redirectTo: "/"
+              })
+            }}>
               Logout <ExitIcon className="ml-2 h-4 w-4" />
             </Button>
           </nav>

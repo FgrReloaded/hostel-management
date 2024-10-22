@@ -21,13 +21,25 @@ import { getAllStudents } from "@/actions/admin/student"
 import SettingsPage from "@/components/admin/Settings"
 import Stats from "@/components/admin/Stats"
 
+interface PaymentHistoryProps extends PaymentType {
+  student: {
+    name: string;
+    id: string;
+  }
+}
+
+interface StudentWithPayments extends StudentType {
+  payments: PaymentType[];
+}
+
+
 
 export default function OwnerDashboard() {
   const searchParams = useSearchParams()
   const [activeView, setActiveView] = useState("overview")
-  const [selectedStudent, setSelectedStudent] = useState<StudentType| null>(null)
-  const [paymentHistory, setPaymentHistory] = useState<PaymentType[]>([]);
-  const [students, setStudents] = useState<StudentType[]>([]);
+  const [selectedStudent, setSelectedStudent] = useState<StudentWithPayments | null>(null)
+  const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryProps[]>([]);
+  const [students, setStudents] = useState<StudentWithPayments[]>([]);
   const router = useRouter();
 
 
@@ -114,7 +126,7 @@ export default function OwnerDashboard() {
                 </Avatar>
                 <div>
                   <CardTitle className="text-2xl">{selectedStudent.name}</CardTitle>
-                  <CardDescription>Room {selectedStudent.room}</CardDescription>
+                  <CardDescription>Room {selectedStudent?.roomNumber}</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -129,12 +141,12 @@ export default function OwnerDashboard() {
                   <p>{selectedStudent.phone}</p>
                 </div>
                 <div>
-                  <p className="font-semibold text-indigo-700">Payment Status</p>
-                  <p>{selectedStudent.status}</p>
+                  <p className="font-semibold text-indigo-700">Registration Status</p>
+                  <p>{selectedStudent.isRegistered ? 'Registered' : 'Not Registered'}</p>
                 </div>
                 <div>
-                  <p className="font-semibold text-indigo-700">Amount</p>
-                  <p>₹{selectedStudent.amount}</p>
+                  <p className="font-semibold text-indigo-700">Fees</p>
+                  <p>₹ 3500</p>
                 </div>
               </div>
               <div className="mt-6 space-y-4">

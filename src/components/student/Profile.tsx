@@ -3,9 +3,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { fetchParentInfo, getProfile, updateStudentProfile } from '@/actions/student/student';
+import { fetchParentInfo, updateStudentProfile } from '@/actions/student/student';
+import { Student } from '@prisma/client';
 
-const Profile = ({ studentInfo }) => {
+const Profile = ({ studentInfo }: {studentInfo: Student}) => {
   const [isEditing, setIsEditing] = useState(true);
   const [editableInfo, setEditableInfo] = useState({
     address: '',
@@ -90,7 +91,7 @@ const Profile = ({ studentInfo }) => {
             <div className="space-y-2">
               <Label>Address</Label>
               <Input
-                value={canEdit.address ? (isEditing ? editableInfo.address : '') : studentInfo?.address}
+                value={canEdit.address ? (isEditing ? editableInfo.address : '') : studentInfo?.address || ''}
                 onChange={(e) => handleInputChange(e, 'address')}
                 readOnly={!canEdit.address || !isEditing}
                 className={canEdit.address && isEditing ? "" : "bg-gray-100"}

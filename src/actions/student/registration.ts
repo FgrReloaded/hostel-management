@@ -2,14 +2,20 @@
 
 import { auth } from "@/auth";
 import prisma from "@/lib/db";
-import { RegistrationRequest, RequestStatus } from "@prisma/client";
+import { Parent, RegistrationRequest, RequestStatus, Student } from "@prisma/client";
+
+interface RegistrationRequestTypeWithStudent extends RegistrationRequest {
+  student: {
+    parent: Parent | null;
+  } & Student
+}
 
 
-export async function getAllRegistrationRequests(): Promise<{ error: boolean; msg: string; data?: RegistrationRequest[] }> {
+export async function getAllRegistrationRequests(): Promise<{ error: boolean; msg: string; data?: RegistrationRequestTypeWithStudent[] }> {
   try {
     const session = await auth();
 
-    if (!session && session?.user?.role !== "ADMIN") {
+    if (session?.user?.role !== "ADMIN") {
       return { error: true, msg: "Unauthorized" };
     }
 
@@ -31,7 +37,7 @@ export async function getAllRegistrationRequests(): Promise<{ error: boolean; ms
 
   } catch (error) {
     console.error(error);
-    return { error: true, msg: "Something went wrong, please try again!"};
+    return { error: true, msg: "Something went wrong, please try again!" };
   }
 }
 
@@ -53,7 +59,7 @@ export async function getRegistrationStatus(): Promise<{ error: boolean; msg: st
 
   } catch (error) {
     console.error(error);
-    return { error: true, msg: "Something went wrong, please try again!"};
+    return { error: true, msg: "Something went wrong, please try again!" };
   }
 }
 
@@ -94,11 +100,11 @@ export async function updateRegistrationRequest(id: string, status: RequestStatu
   try {
     const session = await auth();
 
-    if (!session && session?.user?.role !== "ADMIN") {
+    if (session?.user?.role !== "ADMIN") {
       return { error: true, msg: "Unauthorized" };
     }
 
-    const request = await prisma.registrationRequest.update({
+    await prisma.registrationRequest.update({
       where: {
         id,
       },

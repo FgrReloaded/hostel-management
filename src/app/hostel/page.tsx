@@ -40,7 +40,7 @@ export default function StudentDashboard() {
         toast.error("Failed to fetch payment history");
         return;
       }
-      if(!data) {
+      if (!data) {
         return;
       }
       setPaymentHistory(data);
@@ -83,7 +83,7 @@ export default function StudentDashboard() {
         )
       case "payment":
         return (
-          <Payment studentInfo={studentInfo} />
+          <Payment studentInfo={studentInfo!} />
         )
       case "history":
         return (
@@ -91,7 +91,7 @@ export default function StudentDashboard() {
         )
       case "profile":
         return (
-          <Profile studentInfo={studentInfo} />
+          <Profile studentInfo={studentInfo!} />
         )
       case "complaints":
         return (
@@ -171,11 +171,11 @@ export default function StudentDashboard() {
                 </Button>
               </>
             }
-                <Button className="w-full justify-start text-base font-medium py-6 px-4" onClick={()=>signOut({
-                  redirectTo: "/"
-                })}>
-                  Logout <ExitIcon className="ml-2 h-4 w-4" />
-                </Button>
+            <Button className="w-full justify-start text-base font-medium py-6 px-4" onClick={() => signOut({
+              redirectTo: "/"
+            })}>
+              Logout <ExitIcon className="ml-2 h-4 w-4" />
+            </Button>
           </nav>
         </div>
       </motion.div>

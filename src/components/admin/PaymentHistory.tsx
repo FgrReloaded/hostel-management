@@ -25,15 +25,27 @@ import {
 import { Input } from '../ui/input';
 import { Payment } from '@prisma/client';
 
-const PaymentHistory = ({ paymentHistory }) => {
+
+interface PaymentHistoryProps extends Payment {
+  student: {
+    name: string;
+    id: string;
+  }
+}
+
+
+const PaymentHistory = ({ paymentHistory }: {paymentHistory: PaymentHistoryProps[]}) => {
   const [payments, setPayments] = useState(paymentHistory);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState({
+    imageUrl: "",
+    referrenceNo: "" 
+  });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState<number | null>(null);
+  const [selectedRoom, setSelectedRoom] = useState<bigint | null>(null);
   const [assignedRoom, setAssignedRoom] = useState<string | null>(null);
 
-  const updatePayment = async (id: number, type: string) => {
+  const updatePayment = async (id: bigint, type: string) => {
     type = type === "approve" ? "Paid" : "Rejected";
     const { error, msg } = await updatePaymentStatus(id, type, assignedRoom!);
 
@@ -42,7 +54,7 @@ const PaymentHistory = ({ paymentHistory }) => {
     } else {
       toast.success(msg);
       const updatedPayments = payments.map((payment) => {
-        if (payment.id === id) {
+        if (payment.id === BigInt(id)) {
           payment.status = type;
         }
         return payment;
@@ -52,13 +64,16 @@ const PaymentHistory = ({ paymentHistory }) => {
     }
   }
 
-  const openImageDialog = (imageUrl) => {
-    setSelectedImage(imageUrl);
+  const openImageDialog = (imageUrl: string, referrenceNo?: string) => {
+    setSelectedImage({
+      imageUrl,
+      referrenceNo: referrenceNo || ""
+    });
     setIsDialogOpen(true);
   }
 
-  const openRoomDialog = (id: number, amount: number) => {
-    if(amount === 3500){
+  const openRoomDialog = (id: bigint, amount: number) => {
+    if (amount === 3500) {
       updatePayment(id, "approve");
       return;
     }
@@ -93,7 +108,7 @@ const PaymentHistory = ({ paymentHistory }) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {payments && payments.slice().reverse().map((payment: Payment) => (
+              {payments && payments.slice().reverse().map((payment: PaymentHistoryProps) => (
                 <TableRow key={payment.id}>
                   <TableCell>{new Date(payment.createdAt).toDateString()} {new Date(payment.createdAt).toLocaleTimeString()}</TableCell>
                   <TableCell>{payment.student.name}</TableCell>
@@ -101,12 +116,11 @@ const PaymentHistory = ({ paymentHistory }) => {
                   <TableCell>{payment.paymentMethod}</TableCell>
                   <TableCell>
                     <CldImage
-                      src={payment.screenshotImageUrl}
+                      src={payment.screenshotImageUrl ?? ""}
                       alt="Payment Proof"
                       width={50}
                       height={50}
                       className="object-cover rounded-lg cursor-pointer"
-                      onClick={() => openImageDialog(payment.screenshotImageUrl)}
                     />
                   </TableCell>
                   <TableCell>
@@ -127,7 +141,10 @@ const PaymentHistory = ({ paymentHistory }) => {
                         </Button>
                       </>
                     }
-                    <Button onClick={() => openImageDialog(payment.screenshotImageUrl)} variant="outline" className="mr-2">
+                    <Button onClick={() => openImageDialog(
+                      payment.screenshotImageUrl!,
+                      payment.referrenceNo || ""
+                    )} variant="outline" className="mr-2">
                       <Eye size={20} />
                     </Button>
                   </TableCell>
@@ -144,12 +161,15 @@ const PaymentHistory = ({ paymentHistory }) => {
             <AlertDialogTitle>Payment Proof</AlertDialogTitle>
             <AlertDialogDescription>
               <CldImage
-                src={selectedImage!}
+                src={selectedImage.imageUrl}
                 alt="Payment Proof"
                 width={400}
                 height={400}
                 className="object-contain w-full h-full"
               />
+              <p className="text-gray-600 w-full border-b border-gray-200 pb-4">
+                Referrence No: {selectedImage.referrenceNo}
+              </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

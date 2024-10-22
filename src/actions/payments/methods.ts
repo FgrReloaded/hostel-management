@@ -2,7 +2,6 @@
 
 import { auth } from "@/auth";
 import prisma from "@/lib/db";
-import { PaymentMode } from "@/lib/types";
 import { PaymentMethod } from "@prisma/client";
 
 
@@ -23,7 +22,7 @@ export async function getPaymentMethods(): Promise<{ error: boolean; msg: string
 }
 
 
-export async function upsertPaymentMethod(data: PaymentMode): Promise<{ error: boolean; msg: string; }> {
+export async function upsertPaymentMethod(data: PaymentMethod): Promise<{ error: boolean; msg: string; }> {
   try {
     const session = await auth();
 
@@ -74,7 +73,7 @@ export async function upsertPaymentMethod(data: PaymentMode): Promise<{ error: b
   }
 }
 
-export async function handleActiveStatus(id: string): Promise<{ error: boolean; msg: string; }> {
+export async function handleActiveStatus(id: bigint): Promise<{ error: boolean; msg: string; }> {
   try {
     const session = await auth();
     if (!session || session?.user?.role !== "ADMIN") {

@@ -15,7 +15,9 @@ export function useUserProfile() {
           if (profile.error) {
             return;
           }
-          setUserProfile(profile.data)
+          if (profile.data) {
+            setUserProfile(profile.data)
+          }
       } catch (error) {
         console.error('Error fetching user profile:', error)
       }

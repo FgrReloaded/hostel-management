@@ -34,7 +34,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Payment, Student as StudentType } from "@prisma/client"
 import { Separator } from "../ui/separator"
 
-const Student = ({ setActiveView, students, setSelectedStudent }) => {
+interface StudentWithPayments extends StudentType {
+  payments: Payment[];
+}
+
+interface StudentProps {
+  setActiveView: (view: string) => void;
+  students: StudentWithPayments[]
+  setSelectedStudent: (student: StudentWithPayments) => void;
+}
+
+const Student: React.FC<StudentProps> = ({ setActiveView, students, setSelectedStudent }) => {
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -50,11 +60,11 @@ const Student = ({ setActiveView, students, setSelectedStudent }) => {
       const isPaid = lastPayment &&
         lastPayment.amount === 3500 &&
         lastPayment.month === currentMonth &&
-        lastPayment.year === currentYear;
+        lastPayment.year === currentYear
 
       return {
         ...student,
-        status: isPaid ? 'Paid' : 'Unpaid',
+        status: isPaid ? lastPayment.status : 'Unpaid',
         amount: lastPayment ? lastPayment.amount : 0
       };
     });
@@ -173,8 +183,8 @@ const Student = ({ setActiveView, students, setSelectedStudent }) => {
             <Separator className="my-4" />
             <AlertDialogDescription className="text-base">
               <div className="space-y-4">
-                <InfoItem label="Date" value={new Date(selectedPayment?.createdAt!).toDateString()} />
-                <InfoItem label="Method" value={selectedPayment?.paymentMethod!} />
+                <InfoItem label="Date" value={selectedPayment?.createdAt ? new Date(selectedPayment.createdAt).toDateString() : 'N/A'} />
+                <InfoItem label="Method" value={selectedPayment?.paymentMethod || 'N/A'} />
                 <InfoItem label="Amount" value={String(selectedPayment?.amount)} />
                 <InfoItem label="Verified" value={selectedPayment?.isVerified ? "Yes" : "No"} />
               </div>

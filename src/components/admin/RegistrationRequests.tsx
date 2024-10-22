@@ -24,8 +24,14 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Separator } from '../ui/separator';
 
+interface RegistrationRequestTypeWithStudent extends RegistrationRequestType {
+  student: {
+    parent: Parent | null;
+  } & Student
+}
+
 const RegistrationRequest = () => {
-  const [registrationRequests, setRegistrationRequests] = useState<RegistrationRequestType[]>([]);
+  const [registrationRequests, setRegistrationRequests] = useState<RegistrationRequestTypeWithStudent[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [selectedParent, setSelectedParent] = useState<Parent | null>(null);
   const [isStudentDialogOpen, setIsStudentDialogOpen] = useState(false);
@@ -93,7 +99,7 @@ const RegistrationRequest = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {registrationRequests && registrationRequests?.map((registrationRequest: RegistrationRequestType) => (
+              {registrationRequests && registrationRequests?.map((registrationRequest: RegistrationRequestTypeWithStudent) => (
                 <TableRow key={registrationRequest.id}>
                   <TableCell>{new Date(registrationRequest?.createdAt).toDateString()} {new Date(registrationRequest?.createdAt).toLocaleTimeString()}</TableCell>
                   <TableCell className='flex gap-2 items-center'>{registrationRequest?.student?.name}
@@ -102,7 +108,7 @@ const RegistrationRequest = () => {
                     </Button>
                   </TableCell>
                   <TableCell>
-                    <Button onClick={() => openParentDialog(registrationRequest.student.parent)} variant="outline" className="mr-2">
+                    <Button onClick={() => registrationRequest?.student?.parent && openParentDialog(registrationRequest.student.parent)} variant="outline" className="mr-2">
                       View
                     </Button>
                   </TableCell>
@@ -179,11 +185,11 @@ const RegistrationRequest = () => {
   )
 }
 
-function InfoItem({ label, value }: { label: string; value: string }) {
+function InfoItem({ label, value }: { label: string; value: string | undefined }) {
   return (
     <div className="flex flex-col sm:flex-row sm:justify-between">
       <span className="font-medium text-muted-foreground">{label}:</span>
-      <span className="text-foreground">{value}</span>
+      <span className="text-foreground">{value || 'N/A'}</span>
     </div>
   )
 }

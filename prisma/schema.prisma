@@ -110,6 +110,7 @@ model Payment {
   screenshotImageUrl String?
   ownerReceiptUrl    String?
   paymentMethod      String
+  referrenceNo       String?
   isVerified         Boolean  @default(false)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt

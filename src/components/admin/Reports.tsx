@@ -4,7 +4,8 @@ import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import { Button } from "../ui/button"
 import { Download } from "lucide-react"
 
-const Reports = ({monthlyIncome}) => {
+
+const Reports = ({monthlyIncome}: {monthlyIncome: { month: string; income: number }[];}) => {
   return (
     <Card>
     <CardHeader>

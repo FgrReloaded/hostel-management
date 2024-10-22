@@ -7,20 +7,10 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { getPaymentMethods, handleActiveStatus, upsertPaymentMethod } from '@/actions/payments/methods';
 import { CldImage, CldUploadWidget } from 'next-cloudinary';
+import { PaymentMethod as PaymentMethodType} from '@prisma/client';
 
 
-type PaymentMethod = {
-  id: string;
-  type: 'UPI' | 'NETBANKING' | 'QR' | 'CASH';
-  name: string;
-  isActive: boolean;
-  upiId?: string;
-  beneficiaryName?: string;
-  accountNumber?: string;
-  bankName?: string;
-  ifsc?: string;
-  qrcode?: string;
-};
+
 
 const PaymentMethodInput = React.memo(({ id, label, disabled, value, onChange }: { id: string, label: string, disabled: boolean, value: string, onChange: (value: string) => void }) => {
   return (
@@ -40,7 +30,7 @@ const PaymentMethodInput = React.memo(({ id, label, disabled, value, onChange }:
 
 PaymentMethodInput.displayName = 'PaymentMethodInput';
 
-const PaymentMethodDetailsForm = React.memo(({ method, onUpdate }: { method: PaymentMethod, onUpdate: (updatedMethod: PaymentMethod) => void }) => {
+const PaymentMethodDetailsForm = React.memo(({ method, onUpdate }: { method: PaymentMethodType, onUpdate: (updatedMethod: PaymentMethodType) => void }) => {
   const [formData, setFormData] = useState(method);
 
   const handleInputChange = (key: string, value: string) => {
@@ -51,8 +41,8 @@ const PaymentMethodDetailsForm = React.memo(({ method, onUpdate }: { method: Pay
     onUpdate(formData);
   }, [formData, onUpdate]);
 
-  const handleSuccess = (result) => {
-    handleInputChange('qrcode', result.info.public_id);
+  const handleSuccess = (result: unknown) => {
+    handleInputChange('qrcode', (result as { info: { public_id: string } }).info.public_id);
   }
 
   return (
@@ -102,7 +92,7 @@ const PaymentMethodDetailsForm = React.memo(({ method, onUpdate }: { method: Pay
 PaymentMethodDetailsForm.displayName = 'PaymentMethodDetailsForm';
 
 const PaymentMethod = () => {
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodType[] | null>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -112,8 +102,6 @@ const PaymentMethod = () => {
       try {
         const response = await getPaymentMethods();
         if (!response.error && response.data) {
-          console.log(response.data);
-
           setPaymentMethods(response.data);
         } else {
           setError(response.msg);
@@ -129,20 +117,20 @@ const PaymentMethod = () => {
     fetchPaymentMethods();
   }, []);
 
-  const handleTogglePaymentMethod = useCallback(async (id: string) => {
+  const handleTogglePaymentMethod = useCallback(async (id: bigint) => {
     await handleActiveStatus(id);
     setPaymentMethods(prevMethods =>
-      prevMethods.map(method =>
-        method.id === id ? { ...method, isActive: !method.isActive } : method
-      )
+      prevMethods ? prevMethods.map(method =>
+        method.id === BigInt(id) ? { ...method, isActive: !method.isActive } : method
+      ) : []
     );
   }, []);
 
-  const handleUpdateMethod = useCallback((updatedMethod: PaymentMethod) => {
+  const handleUpdateMethod = useCallback((updatedMethod: PaymentMethodType) => {
     setPaymentMethods(prevMethods =>
-      prevMethods.map(method =>
+      prevMethods ? prevMethods.map(method =>
         method.id === updatedMethod.id ? { ...method, ...updatedMethod } : method
-      )
+      ) : prevMethods
     );
   }, []);
 
@@ -150,10 +138,13 @@ const PaymentMethod = () => {
     setIsLoading(true);
     setError(null);
     try {
+      if (!paymentMethods) {
+        return;
+      }
       for (const method of paymentMethods) {
         const response = await upsertPaymentMethod(method);
         if (response.error) {
-          setError(`Failed to update ${method.name}: ${response.msg}`);
+          setError(`Failed to update ${method.type}: ${response.msg}`);
           break;
         }
       }
@@ -183,7 +174,7 @@ const PaymentMethod = () => {
         <CardDescription>Choose the payment methods available for your hostel</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {paymentMethods.map(method => (
+        {paymentMethods?.map(method => (
           <div key={method.id} className="space-y-4">
             <div className="flex items-center justify-between py-2">
               <div className="flex items-center space-x-4">
@@ -196,7 +187,7 @@ const PaymentMethod = () => {
                   htmlFor={`switch-${method.id}`}
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  {method.name}
+                  {method.type}
                 </label>
               </div>
               {method.isActive ? (

@@ -14,14 +14,17 @@ import { CldUploadWidget } from 'next-cloudinary';
 import Image from 'next/image';
 import { createNewPayment } from '@/actions/payments/payment';
 import { toast } from 'sonner';
+import { Input } from '../ui/input';
+import { Student } from '@prisma/client';
 
 
-const Payment = ({ studentInfo }) => {
+const Payment = ({ studentInfo }: {studentInfo: Student}) => {
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
   const [uploadedImage, setUploadedImage] = useState<Record<string, string>>({
     public_id: "",
     secure_url: ""
   });
+  const [referrenceNo, setReferrenceNo] = useState<string>("");
 
   const paymentDetails = {
     upi: {
@@ -36,14 +39,15 @@ const Payment = ({ studentInfo }) => {
     }
   };
 
+  // @ts-expect-error-ignore
   const handleSuccess = (result) => {
-    setUploadedImage(
-      {
-        public_id: result.info.public_id,
-        secure_url: result.info.secure_url
-      }
-    );
-  }
+      setUploadedImage(
+        {
+          public_id: result.info.public_id,
+          secure_url: result.info.secure_url
+        }
+      );
+    }
 
   const onUpload = async () => {
 
@@ -54,6 +58,7 @@ const Payment = ({ studentInfo }) => {
 
     const { error, msg } = await createNewPayment({
       paymentMethod,
+      referrenceNo,
       screenshotImageUrl: uploadedImage.public_id,
       amount: studentInfo?.isRegistered ? 3500 : 6000
     });
@@ -132,6 +137,13 @@ const Payment = ({ studentInfo }) => {
                   );
                 }}
               </CldUploadWidget>
+              <div className="space-y-2">
+                <Label htmlFor="referrence-no">Referrence No</Label>
+                <Input type="text" id="referrence-no" className="w-full border border-gray-200 rounded-lg p-3" placeholder="Enter referrence number (If any)"
+                  value={referrenceNo}
+                  onChange={(e) => setReferrenceNo(e.target.value)}/>
+              </div>
+
             </div>
             {
               uploadedImage.secure_url ?

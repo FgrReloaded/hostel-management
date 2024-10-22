@@ -4,11 +4,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "../ui/badge"
 import { toast } from "sonner"
 import { createRegistrationRequest } from "@/actions/student/registration"
+import { Payment, RegistrationRequest, Student } from "@prisma/client"
 
-// interface StudentInfo {}
+interface OverviewProps {
+  studentInfo: Student | null
+  setActiveView: (view: string) => void
+  registrationStatus: RegistrationRequest | null
+  paymentHistory: Payment[]
+}
 
 
-const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHistory }) => {
+const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHistory }: OverviewProps) => {
 
   const registerUser = async () => {
     if (!studentInfo?.profileSetup) {

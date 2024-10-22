@@ -22,7 +22,7 @@ const Stats = ({ students }: { students: StudentWithPayment[] }) => {
     unpaidStudents: 0,
   })
 
-  const [revenueTrend, setRevenueTrend] = useState([])
+  const [revenueTrend, setRevenueTrend] = useState<{ month: string; revenue: number }[]>([])
 
   const currentDate = new Date()
   const currentMonth = currentDate.getMonth() + 1
@@ -56,7 +56,6 @@ const Stats = ({ students }: { students: StudentWithPayment[] }) => {
         pendingPayments: data.pendingPayments || 0,
       }))
 
-      // Simulated revenue trend data (replace with actual data from your backend)
       setRevenueTrend([
         { month: "Jan", revenue: 42000 },
         { month: "Feb", revenue: 45000 },

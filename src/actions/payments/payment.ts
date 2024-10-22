@@ -8,9 +8,17 @@ interface PaymentInterface {
   paymentMethod: string;
   screenshotImageUrl: string;
   amount: number;
+  referrenceNo: string;
+}
+interface PaymentHistoryProps extends Payment {
+  student: {
+    name: string;
+    id: string;
+  }
 }
 
-export async function getAllPayments(): Promise<{ error: boolean; msg: string; data?: Payment[] }> {
+
+export async function getAllPayments(): Promise<{ error: boolean; msg: string; data?: PaymentHistoryProps[] }> {
   try {
     const session = await auth();
 
@@ -73,7 +81,8 @@ export async function getPayments(): Promise<{ error: boolean; msg: string; data
 export async function createNewPayment({
   paymentMethod,
   screenshotImageUrl,
-  amount
+  amount,
+  referrenceNo
 }: PaymentInterface): Promise<{ error: boolean; msg: string; }> {
   try {
     const session = await auth();
@@ -88,7 +97,8 @@ export async function createNewPayment({
           studentId: session?.user.id,
           paymentMethod,
           screenshotImageUrl,
-          amount
+          amount,
+          referrenceNo
         }
       });
       return { error: false, msg: "Payment uploaded" };
@@ -100,7 +110,8 @@ export async function createNewPayment({
           screenshotImageUrl,
           amount,
           month: new Date().getMonth() + 1,
-          year: new Date().getFullYear()
+          year: new Date().getFullYear(),
+          referrenceNo,
         }
       });
       return { error: false, msg: "Payment uploaded" }
@@ -113,7 +124,7 @@ export async function createNewPayment({
   }
 }
 
-export async function updatePaymentStatus(id: number, status: string, room: string): Promise<{ error: boolean; msg: string; }> {
+export async function updatePaymentStatus(id: bigint, status: string, room: string): Promise<{ error: boolean; msg: string; }> {
   try {
     const session = await auth();
 

@@ -9,6 +9,7 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { getAdmin } from '@/actions/admin/auth'
+import Image from 'next/image'
 
 
 export default function HostelLandingPage() {
@@ -34,7 +35,7 @@ export default function HostelLandingPage() {
 
   useEffect(() => {
     (async () => {
-      const {error} = await getAdmin();
+      const { error } = await getAdmin();
       if (error) {
         navigate.push("/setup-admin");
       }
@@ -74,9 +75,15 @@ export default function HostelLandingPage() {
                   Dashboard
                 </span>
               </Link>
-              : <Link href={"/auth/register"} className="hidden md:block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors">
-                Book Now
-              </Link>
+              :
+              <div className='flex gap-2'>
+                <Link href={"/login/admin"} className="hidden md:block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors">
+                  Staff Login
+                </Link>
+                <Link href={"/auth/login"} className="hidden md:block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors">
+                  Student Login
+                </Link>
+              </div>
           }
           <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X className="h-6 w-6 text-gray-600" /> : <Menu className="h-6 w-6 text-gray-600" />}
@@ -170,13 +177,107 @@ export default function HostelLandingPage() {
       <section id="gallery" className="py-20 bg-gray-100">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-16 text-gray-800">Explore Our Hostel</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <img src="/placeholder.svg?height=400&width=600" alt="Common area" className="rounded-xl shadow-md transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" />
-            <img src="/placeholder.svg?height=400&width=600" alt="Dorm room" className="rounded-xl shadow-md transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" />
-            <img src="/placeholder.svg?height=400&width=600" alt="Kitchen" className="rounded-xl shadow-md transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" />
-            <img src="/placeholder.svg?height=400&width=600" alt="Bathroom" className="rounded-xl shadow-md transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" />
-            <img src="/placeholder.svg?height=400&width=600" alt="Outdoor area" className="rounded-xl shadow-md transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" />
-            <img src="/placeholder.svg?height=400&width=600" alt="Reception" className="rounded-xl shadow-md transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/1.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/2.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/3.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/4.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/5.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/6.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/7.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/8.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/9.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/10.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/11.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/12.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/13.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/14.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/15.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/16.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/17.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/18.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/19.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/20.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/21.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/22.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/23.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/24.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/25.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/26.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/27.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/28.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/29.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/30.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/31.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/32.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+            <div className="rounded-xl overflow-hidden w-[400px] h-[350px] relative">
+              <Image src="/gallery/33.jpeg" alt="Hostel interior" className="rounded-xl" objectFit='cover' layout='fill' />
+            </div>
+
           </div>
         </div>
       </section>

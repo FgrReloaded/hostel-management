@@ -75,9 +75,9 @@ const RegistrationRequest = ({ setCountRegistrationRequest }: { setCountRegistra
         toast.error(msg);
       } else {
         if (data) {
+          setRegistrationRequests(data);
           const pendingRequests = data.filter(request => request.status === "PENDING");
           setCountRegistrationRequest(pendingRequests.length);
-          setRegistrationRequests(data);
         }
       }
     })();

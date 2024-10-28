@@ -23,13 +23,13 @@ const Stats = ({ students }: { students: StudentWithPayment[] }) => {
     paidStudents: 0,
     unpaidStudents: 0,
   })
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   const [revenueTrend, setRevenueTrend] = useState<{ month: string; revenue: number }[]>([])
 
-  const currentDate = new Date()
-  const currentMonth = currentDate.getMonth() + 1
-  const currentYear = currentDate.getFullYear()
+  const currentDate = useMemo(() => new Date(), [])
+  const currentMonth = useMemo(() => currentDate.getMonth() + 1, [currentDate])
+  const currentYear = useMemo(() => currentDate.getFullYear(), [currentDate])
 
   const studentsPaid = useMemo(() => {
     return students.filter(student => {
@@ -39,42 +39,53 @@ const Stats = ({ students }: { students: StudentWithPayment[] }) => {
         lastPayment.month === currentMonth &&
         lastPayment.year === currentYear
     }).length
+  }, [students, currentMonth, currentYear])
+
+  useEffect(() => {
+    if (students) {
+      setLoading(false)
+    }
   }, [students])
 
   useEffect(() => {
-    (async () => {
-      const { error, data } = await getPaymentStats()
-      setLoading(false)
-      if (error) {
-        console.error("Error fetching payment stats")
-        return
+    const fetchPaymentStats = async () => {
+      setLoading(true)
+      try {
+        const { error, data } = await getPaymentStats()
+
+        if (error) {
+          console.error("Error fetching payment stats")
+          return
+        }
+
+        if (data) {
+          setOverview(prev => ({
+            ...prev,
+            totalRevenue: data.totalRevenue || 0,
+            pendingPayments: data.pendingPayments || 0,
+          }))
+
+          setRevenueTrend([
+            { month: "Jan", revenue: 42000 },
+            { month: "Feb", revenue: 45000 },
+            { month: "Mar", revenue: 48000 },
+            { month: "Apr", revenue: 51000 },
+            { month: "May", revenue: 53000 },
+            { month: "Jun", revenue: 56000 },
+          ])
+        }
+      } finally {
+        setLoading(false)
       }
+    }
 
-      if (!data) {
-        return
-      }
-
-      setOverview(prev => ({
-        ...prev,
-        totalRevenue: data.totalRevenue || 0,
-        pendingPayments: data.pendingPayments || 0,
-      }))
-
-      setRevenueTrend([
-        { month: "Jan", revenue: 42000 },
-        { month: "Feb", revenue: 45000 },
-        { month: "Mar", revenue: 48000 },
-        { month: "Apr", revenue: 51000 },
-        { month: "May", revenue: 53000 },
-        { month: "Jun", revenue: 56000 },
-      ])
-    })()
+    fetchPaymentStats()
   }, [])
 
-  const paymentStatusData = [
+  const paymentStatusData = useMemo(() => [
     { name: "Paid", value: studentsPaid },
     { name: "Unpaid", value: students.length - studentsPaid },
-  ]
+  ], [studentsPaid, students.length])
 
   const COLORS = ["#4F46E5", "#EF4444"]
 

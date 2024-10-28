@@ -25,7 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body style={lato.style}>
         <SessionProvider>
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<span className="loader"></span>}>
             {children}
           </Suspense>
           <Toaster />

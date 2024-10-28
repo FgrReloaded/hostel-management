@@ -189,7 +189,7 @@ const Student: React.FC<StudentProps> = ({ setActiveView, students, setSelectedS
               <div className="space-y-4">
                 <InfoItem label="Date" value={selectedPayment?.createdAt ? new Date(selectedPayment.createdAt).toDateString() : 'N/A'} />
                 <InfoItem label="Method" value={selectedPayment?.paymentMethod || 'N/A'} />
-                <InfoItem label="Amount" value={String(selectedPayment?.amount)} />
+                <InfoItem label="Amount" value={String(selectedPayment?.amount) ?? "N/A"} />
                 <InfoItem label="Verified" value={selectedPayment?.isVerified ? "Yes" : "No"} />
               </div>
             </AlertDialogDescription>

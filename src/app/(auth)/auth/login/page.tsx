@@ -44,7 +44,7 @@ export default function SignIn() {
         });
 
         if (!res?.error) {
-            window.location.href = "/";
+            window.location.href = "/hostel";
         }
         if (res?.error) {
             form.setError("password", { message: "Invalid email or password" });

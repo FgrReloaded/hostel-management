@@ -54,7 +54,7 @@ export default function SignUp() {
                 await signIn("user", {
                     email: values.email,
                     password: values.password,
-                    callbackUrl: "/",
+                    callbackUrl: "/hostel",
                 });
             }
             toast.error(msg);

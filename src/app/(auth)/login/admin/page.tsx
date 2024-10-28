@@ -39,9 +39,10 @@ export default function AdminLogin() {
         const res = await signIn("admin", {
             email: values.email,
             password: values.password,
-            redirectTo: "/hostel/admin"
         });
-
+        if (!res?.error) {
+            window.location.href = "/hostel/admin";
+        }
         if (res?.error) {
             form.setError("password", { message: "Invalid email or password" });
         }

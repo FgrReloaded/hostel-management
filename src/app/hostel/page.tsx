@@ -24,6 +24,7 @@ import { getRegistrationStatus } from "@/actions/student/registration"
 import { getPayments } from "@/actions/payments/payment"
 import { signOut } from "next-auth/react"
 import { ExitIcon } from "@radix-ui/react-icons"
+import OverViewSkeleton from "@/components/student/Skeleton/OverViewSkeleton"
 
 export default function StudentDashboard() {
   const router = useRouter()
@@ -32,10 +33,13 @@ export default function StudentDashboard() {
   const [registrationStatus, setRegistrationStatus] = useState<RegistrationRequest | null>(null);
   const { userProfile: studentInfo } = useUserProfile();
   const [paymentHistory, setPaymentHistory] = useState<PaymentType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
     (async () => {
       const { error, data } = await getPayments();
+      setIsLoading(false);
       if (error) {
         toast.error("Failed to fetch payment history");
         return;
@@ -59,6 +63,7 @@ export default function StudentDashboard() {
     }
     (async () => {
       const { error, data } = await getRegistrationStatus();
+      setIsLoading(false);
       if (error) {
         toast.error("Failed to fetch registration status");
         return;
@@ -76,6 +81,9 @@ export default function StudentDashboard() {
   }
 
   const renderView = () => {
+    if(isLoading || !studentInfo) {
+      return <OverViewSkeleton />
+    }
     switch (activeView) {
       case "overview":
         return (
@@ -111,7 +119,7 @@ export default function StudentDashboard() {
         className="w-64 bg-white shadow-lg"
       >
         <div className="p-6">
-          <h2 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-tr from-purple-400 via-violet-400 to-indigo-400">Student Portal</h2>
+          <h2 className="text-2xl uppercase text-center font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-tr from-purple-800 via-violet-600 to-indigo-800">SBP Bhawan</h2>
           <nav className="space-y-3">
             <Button
               variant={activeView === "overview" ? "default" : "ghost"}
@@ -188,7 +196,7 @@ export default function StudentDashboard() {
         >
           <h1 className="text-4xl font-bold mb-6 text-gray-800">{activeView.charAt(0).toUpperCase() + activeView.slice(1)}</h1>
           {
-            !studentInfo?.profileSetup &&
+            studentInfo && !studentInfo?.profileSetup  &&
             <Alert variant={"destructive"} className="mb-4" >
               <AlertTitle className="font-bold uppercase">Incomplete Profile !</AlertTitle>
 

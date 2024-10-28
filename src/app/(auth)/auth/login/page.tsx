@@ -60,7 +60,7 @@ export default function SignIn() {
             >
                 <div className="flex flex-col items-center gap-2">
                     <h1 className="text-2xl font-semibold">
-                        Hostel Management
+                        SBP Bhawan
                     </h1>
                     <p className="text-gray-500">Login to your account</p>
                 </div>
@@ -100,7 +100,7 @@ export default function SignIn() {
                 <Button disabled={isLoading} type="submit">Login</Button>
 
                 <div className="flex flex-col items-center gap-2">
-                    <p className="text-gray-500 text-sm">Don&apos;t have an account? <Link href={"/auth/sign-up"} className="text-blue-500 underline">sign up </Link></p>
+                    <p className="text-gray-500 text-sm">Don&apos;t have an account? <Link href={"/auth/register"} className="text-blue-500 underline">sign up </Link></p>
                 </div>
             </form>
         </Form>

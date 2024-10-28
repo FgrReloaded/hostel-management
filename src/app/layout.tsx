@@ -17,8 +17,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Hostel Management System",
-  description: "Hostel Management System",
+  title: "SBP Bhawan System",
+  description: "SBP Bhawan System",
 };
 
 export default function RootLayout({

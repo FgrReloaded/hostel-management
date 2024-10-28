@@ -78,7 +78,7 @@ export default function SetupAdmin() {
       >
         <div className="flex flex-col items-center gap-2">
           <h1 className="text-2xl font-semibold">
-            Hostel Management (Admin)
+            SBP Bhawan (Admin)
           </h1>
           <p className="text-gray-500">Create a admin user</p>
         </div>

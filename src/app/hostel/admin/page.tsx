@@ -174,7 +174,7 @@ export default function OwnerDashboard() {
         className="w-64 bg-white shadow-lg"
       >
         <div className="p-6">
-          <h2 className="text-2xl font-bold mb-6 text-indigo-700">Hostel Management</h2>
+          <h2 className="text-2xl font-bold mb-6 text-indigo-700">SBP Bhawan</h2>
           <nav className="space-y-2">
             {[
               { icon: Home, label: "Overview", view: "overview" },

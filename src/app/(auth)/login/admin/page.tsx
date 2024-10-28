@@ -57,7 +57,7 @@ export default function AdminLogin() {
             >
                 <div className="flex flex-col items-center gap-2">
                     <h1 className="text-2xl font-semibold flex items-center">
-                        Hostel Management
+                        SBP Bhawan
                         <span className="text-blue-500 text-sm ml-2">
                          (Admin Login)
                         </span>
@@ -98,10 +98,6 @@ export default function AdminLogin() {
                     )}
                 />
                 <Button disabled={isLoading} type="submit">Login</Button>
-
-                <div className="flex flex-col items-center gap-2">
-                    <p className="text-gray-500 text-sm">Don&apos;t have an account? <Link href={"/auth/sign-up"} className="text-blue-500 underline">sign up </Link></p>
-                </div>
             </form>
         </Form>
     )

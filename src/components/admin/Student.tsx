@@ -33,6 +33,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Payment, Student as StudentType } from "@prisma/client"
 import { Separator } from "../ui/separator"
+import { StudentSkeleton } from './skeletons/StudentSkeleton';
 
 interface StudentWithPayments extends StudentType {
   payments: Payment[];
@@ -143,6 +144,9 @@ const Student: React.FC<StudentProps> = ({ setActiveView, students, setSelectedS
               </TableRow>
             </TableHeader>
             <TableBody>
+              {
+                students === null && <StudentSkeleton />
+              }
               {filteredStudents && filteredStudents.map((student) => (
                 <TableRow key={student.id}>
                   <TableCell>

@@ -40,6 +40,7 @@ export default function OwnerDashboard() {
   const [selectedStudent, setSelectedStudent] = useState<StudentWithPayments | null>(null)
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryProps[]>([]);
   const [students, setStudents] = useState<StudentWithPayments[]>([]);
+  const [countRegistrationRequest, setCountRegistrationRequest] = useState(0);
   const router = useRouter();
 
 
@@ -93,7 +94,9 @@ export default function OwnerDashboard() {
     })();
   }, []);
 
+
   const renderView = () => {
+
     switch (activeView) {
       case "overview":
         return (
@@ -113,7 +116,7 @@ export default function OwnerDashboard() {
         )
 
       case "request":
-        return <RegistrationRequest />
+        return <RegistrationRequest setCountRegistrationRequest={setCountRegistrationRequest} />
       case "studentProfile":
         if (!selectedStudent) return null
         return (
@@ -192,7 +195,21 @@ export default function OwnerDashboard() {
                 onClick={() => handleViewChange(view)}
               >
                 <Icon className="mr-2 h-4 w-4" />
-                {label}
+                {label} {view==="history" && paymentHistory.filter(p => p.status === "Pending").length > 0 &&
+                  (
+                    <span className="bg-red-500 text-white rounded-full px-2 p-1 font-extrabold text-xs ml-2">
+                      {paymentHistory.filter(p => p.status === "Pending").length}
+                    </span>
+                  )
+                }
+                {
+                  view==="request" && countRegistrationRequest > 0 &&
+                  (
+                    <span className="bg-red-500 text-white rounded-full px-2 p-1 font-extrabold text-xs ml-2">
+                      {countRegistrationRequest}
+                    </span>
+                  )
+                }
               </Button>
             ))}
             <Button variant="ghost" className="w-full justify-start text-red-500" onClick={() => {

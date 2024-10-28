@@ -23,6 +23,7 @@ import {
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
 import { Separator } from '../ui/separator';
+import { StudentSkeleton } from './skeletons/StudentSkeleton';
 
 interface RegistrationRequestTypeWithStudent extends RegistrationRequestType {
   student: {
@@ -30,7 +31,7 @@ interface RegistrationRequestTypeWithStudent extends RegistrationRequestType {
   } & Student
 }
 
-const RegistrationRequest = () => {
+const RegistrationRequest = ({ setCountRegistrationRequest }: { setCountRegistrationRequest: (count: number) => void }) => {
   const [registrationRequests, setRegistrationRequests] = useState<RegistrationRequestTypeWithStudent[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [selectedParent, setSelectedParent] = useState<Parent | null>(null);
@@ -74,6 +75,8 @@ const RegistrationRequest = () => {
         toast.error(msg);
       } else {
         if (data) {
+          const pendingRequests = data.filter(request => request.status === "PENDING");
+          setCountRegistrationRequest(pendingRequests.length);
           setRegistrationRequests(data);
         }
       }
@@ -99,6 +102,9 @@ const RegistrationRequest = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
+              {
+                registrationRequests === null && <StudentSkeleton />
+              }
               {registrationRequests && registrationRequests?.map((registrationRequest: RegistrationRequestTypeWithStudent) => (
                 <TableRow key={registrationRequest.id}>
                   <TableCell>{new Date(registrationRequest?.createdAt).toDateString()} {new Date(registrationRequest?.createdAt).toLocaleTimeString()}</TableCell>

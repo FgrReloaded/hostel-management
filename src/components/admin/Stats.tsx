@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle, Bell, Users, DollarSign } from "lucide-react"
+import { AlertCircle, Bell, Users, IndianRupee } from "lucide-react"
 import { motion } from "framer-motion"
 import { useEffect, useMemo, useState } from "react"
 import { getPaymentStats } from "@/actions/admin/stats"
@@ -9,6 +9,8 @@ import { Payment, Student } from "@prisma/client"
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import { PieChart, Pie, Cell } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { StatsSkeleton } from "@/components/admin/skeletons/StatsSkeleton"
+
 
 interface StudentWithPayment extends Student {
   payments: Payment[]
@@ -21,6 +23,7 @@ const Stats = ({ students }: { students: StudentWithPayment[] }) => {
     paidStudents: 0,
     unpaidStudents: 0,
   })
+  const [loading, setLoading] = useState(true)
 
   const [revenueTrend, setRevenueTrend] = useState<{ month: string; revenue: number }[]>([])
 
@@ -41,6 +44,7 @@ const Stats = ({ students }: { students: StudentWithPayment[] }) => {
   useEffect(() => {
     (async () => {
       const { error, data } = await getPaymentStats()
+      setLoading(false)
       if (error) {
         console.error("Error fetching payment stats")
         return
@@ -74,11 +78,15 @@ const Stats = ({ students }: { students: StudentWithPayment[] }) => {
 
   const COLORS = ["#4F46E5", "#EF4444"]
 
+  if (loading) {
+    return <StatsSkeleton />
+  }
+
   return (
     <div className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {[
-          { title: "Total Revenue", icon: DollarSign, value: `₹${overview.totalRevenue}`, description: "This month" },
+          { title: "Total Revenue", icon: IndianRupee, value: `₹${overview.totalRevenue}`, description: "This month" },
           { title: "Pending Payments", icon: Bell, value: overview.pendingPayments, description: "Students with due payments" },
           { title: "Paid Students", icon: Users, value: studentsPaid, description: `Out of ${students.length}` },
           { title: "Unpaid Students", icon: AlertCircle, value: students.length - studentsPaid, description: "Requires attention" },
@@ -111,7 +119,7 @@ const Stats = ({ students }: { students: StudentWithPayment[] }) => {
                   color: "hsl(var(--chart-1))",
                 },
               }}
-              className="h-[300px]"
+              className="h-[300px] w-4/5"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={revenueTrend}>

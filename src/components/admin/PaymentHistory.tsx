@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Input } from '../ui/input';
 import { Payment } from '@prisma/client';
+import { StudentSkeleton } from './skeletons/StudentSkeleton';
 
 
 interface PaymentHistoryProps extends Payment {
@@ -38,7 +39,7 @@ const PaymentHistory = ({ paymentHistory }: {paymentHistory: PaymentHistoryProps
   const [payments, setPayments] = useState(paymentHistory);
   const [selectedImage, setSelectedImage] = useState({
     imageUrl: "",
-    referrenceNo: "" 
+    referrenceNo: ""
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false);
@@ -108,6 +109,9 @@ const PaymentHistory = ({ paymentHistory }: {paymentHistory: PaymentHistoryProps
               </TableRow>
             </TableHeader>
             <TableBody>
+              {
+                paymentHistory === null && <StudentSkeleton />
+              }
               {payments && payments.slice().reverse().map((payment: PaymentHistoryProps) => (
                 <TableRow key={payment.id}>
                   <TableCell>{new Date(payment.createdAt).toDateString()} {new Date(payment.createdAt).toLocaleTimeString()}</TableCell>

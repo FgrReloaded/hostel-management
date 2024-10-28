@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { UserPlus, Home, Users, DollarSign, FileText, Settings, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -20,6 +20,8 @@ import RegistrationRequest from "@/components/admin/RegistrationRequests"
 import { getAllStudents } from "@/actions/admin/student"
 import SettingsPage from "@/components/admin/Settings"
 import Stats from "@/components/admin/Stats"
+import { getPaymentStats } from "@/actions/admin/stats"
+import { StatsSkeleton } from "@/components/admin/skeletons/StatsSkeleton"
 
 interface PaymentHistoryProps extends PaymentType {
   student: {
@@ -29,6 +31,8 @@ interface PaymentHistoryProps extends PaymentType {
 }
 
 interface StudentWithPayments extends StudentType {
+  status: string;
+  amount: number;
   payments: PaymentType[];
 }
 
@@ -42,7 +46,14 @@ export default function OwnerDashboard() {
   const [students, setStudents] = useState<StudentWithPayments[]>([]);
   const [countRegistrationRequest, setCountRegistrationRequest] = useState(0);
   const router = useRouter();
-
+  const [overview, setOverview] = useState({
+    totalRevenue: 0,
+    pendingPayments: 0,
+    paidStudents: 0,
+    unpaidStudents: 0,
+  })
+  const [revenueTrend, setRevenueTrend] = useState<{ month: string; revenue: number }[]>([])
+  const [isLoading, setIsLoading] = useState(true);
 
   const monthlyIncome = [
     { month: "Jan", income: 14000 },
@@ -52,6 +63,29 @@ export default function OwnerDashboard() {
     { month: "May", income: 15000 },
   ]
 
+
+  const currentDate = useMemo(() => new Date(), [])
+  const currentMonth = useMemo(() => currentDate.getMonth() + 1, [currentDate])
+  const currentYear = useMemo(() => currentDate.getFullYear(), [currentDate])
+
+  const studentsWithStatus = useMemo(() => {
+    return students.map(student => {
+      const lastPayment = student.payments[0]
+      const isPaid = lastPayment &&
+        lastPayment.amount === 3500 &&
+        lastPayment.month === currentMonth &&
+        lastPayment.year === currentYear
+
+      return {
+        ...student,
+        status: isPaid ? lastPayment.status : 'Unpaid',
+        amount: lastPayment ? lastPayment.amount : 0
+      }
+    }, [students, currentMonth, currentYear])
+  }, [students, currentMonth, currentYear])
+
+
+  const studentsPaid = useMemo(() => studentsWithStatus.filter(s => s.status === "Paid").length, [studentsWithStatus]) as number
 
   useEffect(() => {
     const view = searchParams.get("view")
@@ -69,6 +103,7 @@ export default function OwnerDashboard() {
   useEffect(() => {
     (async () => {
       const { error, data, msg } = await getAllPayments();
+      setIsLoading(false);
       if (error) {
         toast.error(msg);
         return;
@@ -83,28 +118,63 @@ export default function OwnerDashboard() {
   useEffect(() => {
     (async () => {
       const { error, data } = await getAllStudents();
+      setIsLoading(false);
       if (error) {
         toast.error("Something went wrong");
         return;
       }
       if (!data) return;
-
+      // @ts-expect-error-ignore
       setStudents(data);
 
     })();
   }, []);
 
+  useEffect(() => {
+    const fetchPaymentStats = async () => {
+      try {
+        const { error, data } = await getPaymentStats()
+        setIsLoading(false)
+        if (error) {
+          console.error("Error fetching payment stats")
+          return
+        }
+
+        if (data) {
+          setOverview(prev => ({
+            ...prev,
+            totalRevenue: data.totalRevenue || 0,
+            pendingPayments: data.pendingPayments || 0,
+          }))
+
+          setRevenueTrend([
+            { month: "Jan", revenue: 42000 },
+            { month: "Feb", revenue: 45000 },
+            { month: "Mar", revenue: 48000 },
+            { month: "Apr", revenue: 51000 },
+            { month: "May", revenue: 53000 },
+            { month: "Jun", revenue: 56000 },
+          ])
+        }
+      } finally {
+      }
+    }
+    fetchPaymentStats()
+  }, [])
+
 
   const renderView = () => {
-
+    if (isLoading) {
+      return <StatsSkeleton />
+    }
     switch (activeView) {
       case "overview":
         return (
-          <Stats students={students} />
+          <Stats studentsPaid={studentsPaid} students={students} overview={overview} revenueTrend={revenueTrend} />
         )
       case "students":
         return (
-          <Student setActiveView={setActiveView} students={students} setSelectedStudent={setSelectedStudent} />
+          <Student setActiveView={setActiveView} studentsWithStatus={studentsWithStatus} setSelectedStudent={setSelectedStudent} />
         )
       case "reports":
         return (
@@ -195,7 +265,7 @@ export default function OwnerDashboard() {
                 onClick={() => handleViewChange(view)}
               >
                 <Icon className="mr-2 h-4 w-4" />
-                {label} {view==="history" && paymentHistory.filter(p => p.status === "Pending").length > 0 &&
+                {label} {view === "history" && paymentHistory.filter(p => p.status === "Pending").length > 0 &&
                   (
                     <span className="bg-red-500 text-white rounded-full px-2 p-1 font-extrabold text-xs ml-2">
                       {paymentHistory.filter(p => p.status === "Pending").length}
@@ -203,7 +273,7 @@ export default function OwnerDashboard() {
                   )
                 }
                 {
-                  view==="request" && countRegistrationRequest > 0 &&
+                  view === "request" && countRegistrationRequest > 0 &&
                   (
                     <span className="bg-red-500 text-white rounded-full px-2 p-1 font-extrabold text-xs ml-2">
                       {countRegistrationRequest}

@@ -31,7 +31,7 @@ export async function getAllStudents(): Promise<{ error: boolean; data?: Student
       return { error: false, msg: "No students found" };
     }
 
-  
+
 
     return { error: false, msg: "Success", data: students };
 

@@ -37,39 +37,22 @@ import { StudentSkeleton } from './skeletons/StudentSkeleton';
 
 interface StudentWithPayments extends StudentType {
   payments: Payment[];
+  status: string;
+  amount: number;
 }
 
 interface StudentProps {
   setActiveView: (view: string) => void;
-  students: StudentWithPayments[]
+  studentsWithStatus: StudentWithPayments[]
   setSelectedStudent: (student: StudentWithPayments) => void;
 }
 
-const Student: React.FC<StudentProps> = ({ setActiveView, students, setSelectedStudent }) => {
+const Student: React.FC<StudentProps> = ({ setActiveView, studentsWithStatus, setSelectedStudent }) => {
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
 
-  const currentDate = new Date();
-  const currentMonth = currentDate.getMonth() + 1;
-  const currentYear = currentDate.getFullYear();
-
-  const studentsWithStatus = useMemo(() => {
-    return students.map(student => {
-      const lastPayment = student.payments[0];
-      const isPaid = lastPayment &&
-        lastPayment.amount === 3500 &&
-        lastPayment.month === currentMonth &&
-        lastPayment.year === currentYear
-
-      return {
-        ...student,
-        status: isPaid ? lastPayment.status : 'Unpaid',
-        amount: lastPayment ? lastPayment.amount : 0
-      };
-    });
-  }, [students]);
 
   const filteredStudents = useMemo(() => {
     return studentsWithStatus.filter(student => {
@@ -145,7 +128,7 @@ const Student: React.FC<StudentProps> = ({ setActiveView, students, setSelectedS
             </TableHeader>
             <TableBody>
               {
-                students === null && <StudentSkeleton />
+                studentsWithStatus === null && <StudentSkeleton />
               }
               {filteredStudents && filteredStudents.map((student) => (
                 <TableRow key={student.id}>

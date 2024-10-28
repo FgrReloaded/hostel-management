@@ -48,6 +48,12 @@ const History = ({ paymentHistory }: { paymentHistory: Payment[], studentRegiste
                 </TableCell>
               </TableRow>
             ))}
+            {
+              paymentHistory.length === 0 &&
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">No payments found</TableCell>
+              </TableRow>
+            }
           </TableBody>
         </Table>
       </CardContent>

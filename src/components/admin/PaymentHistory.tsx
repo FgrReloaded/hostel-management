@@ -112,6 +112,14 @@ const PaymentHistory = ({ paymentHistory }: {paymentHistory: PaymentHistoryProps
               {
                 paymentHistory === null && <StudentSkeleton />
               }
+              {
+                paymentHistory && paymentHistory.length === 0 &&
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center">
+                    No payment history found
+                  </TableCell>
+                </TableRow>
+              }
               {payments && payments.slice().reverse().map((payment: PaymentHistoryProps) => (
                 <TableRow key={payment.id}>
                   <TableCell>{new Date(payment.createdAt).toDateString()} {new Date(payment.createdAt).toLocaleTimeString()}</TableCell>

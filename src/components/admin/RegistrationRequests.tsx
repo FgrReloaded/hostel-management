@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -11,7 +11,7 @@ import {
 import { Button } from "../ui/button";
 import { Check, X } from "lucide-react";
 import { toast } from "sonner";
-import { getAllRegistrationRequests, updateRegistrationRequest } from '@/actions/student/registration';
+import { updateRegistrationRequest } from '@/actions/student/registration';
 import { RegistrationRequest as RegistrationRequestType, RequestStatus, Student, Parent } from '@prisma/client';
 import {
   AlertDialog,
@@ -31,8 +31,14 @@ interface RegistrationRequestTypeWithStudent extends RegistrationRequestType {
   } & Student
 }
 
-const RegistrationRequest = ({ setCountRegistrationRequest }: { setCountRegistrationRequest: (count: number) => void }) => {
-  const [registrationRequests, setRegistrationRequests] = useState<RegistrationRequestTypeWithStudent[]>([]);
+const RegistrationRequest = ({registrationRequests, setRegistrationRequests, setCountRegistrationRequest}
+  :
+  {
+    registrationRequests: RegistrationRequestTypeWithStudent[],
+    setRegistrationRequests: React.Dispatch<React.SetStateAction<RegistrationRequestTypeWithStudent[]>>,
+    setCountRegistrationRequest: React.Dispatch<React.SetStateAction<number>>
+  }
+) => {
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [selectedParent, setSelectedParent] = useState<Parent | null>(null);
   const [isStudentDialogOpen, setIsStudentDialogOpen] = useState(false);
@@ -55,6 +61,7 @@ const RegistrationRequest = ({ setCountRegistrationRequest }: { setCountRegistra
         return request;
       });
       setRegistrationRequests(updatedRequests);
+      setCountRegistrationRequest((prev) => prev - 1);
     }
   }
 
@@ -68,20 +75,7 @@ const RegistrationRequest = ({ setCountRegistrationRequest }: { setCountRegistra
     setIsParentDialogOpen(true);
   }
 
-  useEffect(() => {
-    (async () => {
-      const { error, data, msg } = await getAllRegistrationRequests();
-      if (error) {
-        toast.error(msg);
-      } else {
-        if (data) {
-          setRegistrationRequests(data);
-          const pendingRequests = data.filter(request => request.status === "PENDING");
-          setCountRegistrationRequest(pendingRequests.length);
-        }
-      }
-    })();
-  }, []);
+
 
   return (
     <Card>
@@ -104,6 +98,13 @@ const RegistrationRequest = ({ setCountRegistrationRequest }: { setCountRegistra
             <TableBody>
               {
                 registrationRequests === null && <StudentSkeleton />
+              }
+              {
+                registrationRequests && registrationRequests.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center">No registration requests</TableCell>
+                  </TableRow>
+                )
               }
               {registrationRequests && registrationRequests?.map((registrationRequest: RegistrationRequestTypeWithStudent) => (
                 <TableRow key={registrationRequest.id}>

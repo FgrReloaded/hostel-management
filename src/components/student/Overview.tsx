@@ -16,19 +16,21 @@ interface OverviewProps {
 
 const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHistory }: OverviewProps) => {
 
-  const registerUser = async () => {
+  const registerUser = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (!studentInfo?.profileSetup) {
       toast.error("Please setup your profile first");
       setActiveView("profile");
       return;
     }
+    (e.target as HTMLButtonElement).textContent = "Sending...";
     const { error, msg } = await createRegistrationRequest();
-
+    (e.target as HTMLButtonElement).textContent = "Register Now";
     if (error) {
       toast.error(msg);
       return;
     }
     toast.success("Registration request sent successfully");
+    window.location.reload();
   }
 
   const monthlyPaid = paymentHistory[0]?.amount === 3500 && paymentHistory[0]?.status === "Paid" && paymentHistory[0]?.month === new Date().getMonth() + 1 && paymentHistory[0]?.year === new Date().getFullYear();
@@ -84,7 +86,7 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
                     registrationStatus?.status === "APPROVED" &&
                     <div className="flex flex-col gap-1">
                       <span className="text-green-700 font-semibold text-lg">Your registration request has been approved</span>
-                      { paymentHistory.length === 0 ?
+                      {paymentHistory.length === 0 ?
                         <div className="flex items-center gap-2">
                           <span className="text-gray-500 font-bold text-lg">Pay the registration fee to get your room assigned.</span>
                           <Button
@@ -94,7 +96,7 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
                             <IndianRupee className="mr-2 h-5 w-5" />
                             Make Payment
                           </Button>
-                        </div>:
+                        </div> :
                         <div className="flex items-center gap-2">
                           <span className=" text-black font-bold text-xl">Payment details uploaded. Please wait for confirmation.</span>
                         </div>
@@ -107,45 +109,51 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
           </div>
         </CardContent>
       </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl">Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          <Button
-            onClick={() => setActiveView("payment")}
-            className="w-full bg-gradient-to-tr from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-bold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
-          >
-            <IndianRupee className="mr-2 h-5 w-5" />
-            Make Payment
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setActiveView("complaints")}
-            className="w-full border-2 border-purple-500 text-purple-500 font-bold py-3 rounded-lg transition-all duration-300 hover:bg-purple-500 hover:text-white transform hover:scale-105"
-          >
-            <MessageSquare className="mr-2 h-5 w-5" />
-            File a Complaint
-          </Button>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl">Recent Notifications</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-4">
-            <li className="flex items-center space-x-3">
-              <Badge variant="default" className="bg-blue-500">New</Badge>
-              <span>Maintenance work scheduled for next week</span>
-            </li>
-            <li className="flex items-center space-x-3">
-              <Badge variant="outline">Info</Badge>
-              <span>Hostel meeting on Friday at 6 PM</span>
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
+      {
+        registrationStatus?.status === "APPROVED" &&
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <Button
+                onClick={() => setActiveView("payment")}
+                className="w-full bg-gradient-to-tr from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-bold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
+              >
+                <IndianRupee className="mr-2 h-5 w-5" />
+                Make Payment
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setActiveView("complaints")}
+                className="w-full border-2 border-purple-500 text-purple-500 font-bold py-3 rounded-lg transition-all duration-300 hover:bg-purple-500 hover:text-white transform hover:scale-105"
+              >
+                <MessageSquare className="mr-2 h-5 w-5" />
+                File a Complaint
+              </Button>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl">Recent Notifications</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-4">
+                <li className="flex items-center space-x-3">
+                  <Badge variant="default" className="bg-blue-500">New</Badge>
+                  <span>Maintenance work scheduled for next week</span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <Badge variant="outline">Info</Badge>
+                  <span>Hostel meeting on Friday at 6 PM</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+        </>
+      }
+
     </div>
   )
 }

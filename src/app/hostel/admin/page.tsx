@@ -12,7 +12,7 @@ import Student from "@/components/admin/Student"
 import Reports from "@/components/admin/Reports"
 import PaymentHistory from "@/components/admin/PaymentHistory"
 import Complaints from "@/components/student/Complaints"
-import { Payment as PaymentType, Student as StudentType } from "@prisma/client"
+import { Payment as PaymentType, Student as StudentType, RegistrationRequest as RegistrationRequestType, Parent } from "@prisma/client"
 import { getAllPayments } from "@/actions/payments/payment"
 import { toast } from "sonner"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -22,6 +22,7 @@ import SettingsPage from "@/components/admin/Settings"
 import Stats from "@/components/admin/Stats"
 import { getPaymentStats } from "@/actions/admin/stats"
 import { StatsSkeleton } from "@/components/admin/skeletons/StatsSkeleton"
+import { getAllRegistrationRequests } from "@/actions/student/registration"
 
 interface PaymentHistoryProps extends PaymentType {
   student: {
@@ -35,6 +36,13 @@ interface StudentWithPayments extends StudentType {
   amount: number;
   payments: PaymentType[];
 }
+
+interface RegistrationRequestTypeWithStudent extends RegistrationRequestType {
+  student: {
+    parent: Parent | null;
+  } & StudentType
+}
+
 
 
 
@@ -53,6 +61,7 @@ export default function OwnerDashboard() {
     unpaidStudents: 0,
   })
   const [revenueTrend, setRevenueTrend] = useState<{ month: string; revenue: number }[]>([])
+  const [registrationRequests, setRegistrationRequests] = useState<RegistrationRequestTypeWithStudent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const monthlyIncome = [
@@ -103,7 +112,6 @@ export default function OwnerDashboard() {
   useEffect(() => {
     (async () => {
       const { error, data, msg } = await getAllPayments();
-      setIsLoading(false);
       if (error) {
         toast.error(msg);
         return;
@@ -118,7 +126,6 @@ export default function OwnerDashboard() {
   useEffect(() => {
     (async () => {
       const { error, data } = await getAllStudents();
-      setIsLoading(false);
       if (error) {
         toast.error("Something went wrong");
         return;
@@ -134,7 +141,6 @@ export default function OwnerDashboard() {
     const fetchPaymentStats = async () => {
       try {
         const { error, data } = await getPaymentStats()
-        setIsLoading(false)
         if (error) {
           console.error("Error fetching payment stats")
           return
@@ -157,10 +163,26 @@ export default function OwnerDashboard() {
           ])
         }
       } finally {
+        setIsLoading(false)
       }
     }
     fetchPaymentStats()
   }, [])
+
+  useEffect(() => {
+    (async () => {
+      const { error, data, msg } = await getAllRegistrationRequests();
+      if (error) {
+        toast.error(msg);
+      } else {
+        if (data) {
+          setRegistrationRequests(data);
+          const pendingRequests = data.filter(request => request.status === "PENDING");
+          setCountRegistrationRequest(pendingRequests.length);
+        }
+      }
+    })();
+  }, []);
 
 
   const renderView = () => {
@@ -184,9 +206,8 @@ export default function OwnerDashboard() {
         return (
           <PaymentHistory paymentHistory={paymentHistory} />
         )
-
       case "request":
-        return <RegistrationRequest setCountRegistrationRequest={setCountRegistrationRequest} />
+        return <RegistrationRequest setCountRegistrationRequest={setCountRegistrationRequest} registrationRequests={registrationRequests} setRegistrationRequests={setRegistrationRequests} />
       case "studentProfile":
         if (!selectedStudent) return null
         return (

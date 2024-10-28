@@ -18,6 +18,7 @@ model Student {
   profileSetup     Boolean  @default(false)
   isRegistered     Boolean  @default(false)
   createdAt        DateTime @default(now())
+  category         String?
   updatedAt        DateTime @updatedAt
   parent           Parent?
   address          String?

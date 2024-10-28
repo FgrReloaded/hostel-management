@@ -80,7 +80,7 @@ export async function createUser(User: User): Promise<{ error: boolean; msg: str
 }
 
 export async function updateStudentProfile({
-  address, parent }: { address: string; parent: { name: string; email: string; phone: string } }
+  address, parent, category }: { address: string; category: string, parent: { name: string; email: string; phone: string } }
 ): Promise<{ error: boolean; msg: string }> {
   try {
     const session = await auth();
@@ -95,6 +95,7 @@ export async function updateStudentProfile({
       },
       data: {
         address,
+        category
       },
     });
     if (parent.name || parent.email || parent.phone) {
@@ -114,6 +115,7 @@ export async function updateStudentProfile({
     if (
       updatedStudent &&
       updatedStudent.address &&
+      updatedStudent.category &&
       updatedStudent.parent &&
       updatedStudent.parent.name &&
       updatedStudent.parent.email &&

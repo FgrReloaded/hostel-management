@@ -3,6 +3,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { fetchParentInfo, updateStudentProfile } from '@/actions/student/student';
 import { Student } from '@prisma/client';
 
@@ -10,6 +17,7 @@ const Profile = ({ studentInfo }: {studentInfo: Student}) => {
   const [isEditing, setIsEditing] = useState(true);
   const [editableInfo, setEditableInfo] = useState({
     address: '',
+    category: '',
     parent: {
       name: '',
       email: '',
@@ -20,6 +28,7 @@ const Profile = ({ studentInfo }: {studentInfo: Student}) => {
 
   const [canEdit, setCanEdit] = useState({
     address: false,
+    category: false,
     parent: false
   });
 
@@ -29,6 +38,7 @@ const Profile = ({ studentInfo }: {studentInfo: Student}) => {
       setParentInfo(info);
       setCanEdit({
         address: !studentInfo?.address,
+        category: !studentInfo?.category,
         parent: !info.name || !info.email || !info.phone
       });
     })();
@@ -51,9 +61,18 @@ const Profile = ({ studentInfo }: {studentInfo: Student}) => {
     }
   };
 
-  const handleSave = async () => {
+  const handleCategoryChange = (value: string) => {
+    setEditableInfo(prev => ({
+      ...prev,
+      category: value
+    }));
+  };
+
+  const handleSave = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    (e.target as HTMLButtonElement).textContent = "Saving...";
     await updateStudentProfile({
       address: editableInfo.address,
+      category: editableInfo.category,
       parent: editableInfo.parent
     });
     window.location.reload();
@@ -61,6 +80,12 @@ const Profile = ({ studentInfo }: {studentInfo: Student}) => {
   };
 
   const isAnyFieldEditable = canEdit.address || canEdit.parent;
+
+  const categories = [
+    { value: "general", label: "General" },
+    { value: "obc", label: "OBC" },
+    { value: "sc-st", label: "SC/ST" },
+  ];
 
   return (
     <Card>
@@ -97,6 +122,32 @@ const Profile = ({ studentInfo }: {studentInfo: Student}) => {
                 className={canEdit.address && isEditing ? "" : "bg-gray-100"}
                 placeholder={canEdit.address ? "Enter your address" : ""}
               />
+            </div>
+            <div className="space-y-2">
+              <Label>Category</Label>
+              {canEdit.category && isEditing ? (
+                <Select
+                  value={editableInfo.category}
+                  onValueChange={handleCategoryChange}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.value} value={category.value}>
+                        {category.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input
+                  value={studentInfo?.category || ''}
+                  readOnly
+                  className="bg-gray-100"
+                />
+              )}
             </div>
             <div className="space-y-2">
               <Label>Registration Status</Label>

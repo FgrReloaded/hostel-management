@@ -4,12 +4,11 @@ import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { MapPin, Users, Coffee, Wifi, Star, ChevronLeft, ChevronRight, Menu, X } from 'lucide-react'
+import { Star, ChevronLeft, ChevronRight, Menu, X } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { getAdmin } from '@/actions/admin/auth'
-import Image from 'next/image'
 import GalleryHome from '@/components/GalleryHome'
 import Features from '@/components/Features'
 

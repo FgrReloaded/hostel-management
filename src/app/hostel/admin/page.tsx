@@ -184,6 +184,11 @@ export default function OwnerDashboard() {
     })();
   }, []);
 
+  const showPaymentHistory = () => {
+    setActiveView("history");
+    router.push(`?view=history&id=${selectedStudent?.id}`, undefined)
+  }
+
 
   const renderView = () => {
     if (isLoading) {
@@ -245,7 +250,7 @@ export default function OwnerDashboard() {
               </div>
               <div className="mt-6 space-y-4">
                 <Button className="w-full bg-indigo-600 hover:bg-indigo-700">Send Payment Reminder</Button>
-                <Button variant="outline" className="w-full">View Payment History</Button>
+                <Button onClick={showPaymentHistory} variant="outline" className="w-full">View Payment History</Button>
               </div>
             </CardContent>
           </Card>

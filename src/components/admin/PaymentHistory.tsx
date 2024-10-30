@@ -25,6 +25,7 @@ import {
 import { Input } from '../ui/input';
 import { Payment } from '@prisma/client';
 import { StudentSkeleton } from './skeletons/StudentSkeleton';
+import { useSearchParams } from 'next/navigation';
 
 
 interface PaymentHistoryProps extends Payment {
@@ -35,7 +36,7 @@ interface PaymentHistoryProps extends Payment {
 }
 
 
-const PaymentHistory = ({ paymentHistory }: {paymentHistory: PaymentHistoryProps[]}) => {
+const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProps[] }) => {
   const [payments, setPayments] = useState(paymentHistory);
   const [selectedImage, setSelectedImage] = useState({
     imageUrl: "",
@@ -45,6 +46,9 @@ const PaymentHistory = ({ paymentHistory }: {paymentHistory: PaymentHistoryProps
   const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<bigint | null>(null);
   const [assignedRoom, setAssignedRoom] = useState<string | null>(null);
+  const [isFilterApplied, setIsFilterApplied] = useState(false);
+  const searchParams = useSearchParams()
+
 
   const updatePayment = async (id: bigint, type: string) => {
     type = type === "approve" ? "Paid" : "Rejected";
@@ -86,13 +90,35 @@ const PaymentHistory = ({ paymentHistory }: {paymentHistory: PaymentHistoryProps
     if (paymentHistory) {
       setPayments(paymentHistory);
     }
-  }, [paymentHistory]);
+    if (searchParams) {
+      const search = searchParams.get('id');
+      if (search) {
+        const filteredPayments = paymentHistory?.filter(payment => payment.studentId === search);
+        setIsFilterApplied(true);
+        setPayments(filteredPayments);
+      }
+    }
+  }, [paymentHistory, searchParams]);
+
+  const clearFilter = () => {
+    setPayments(paymentHistory);
+    setIsFilterApplied(false);
+  }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Payment History</CardTitle>
         <CardDescription>View all past transactions</CardDescription>
+        {
+          isFilterApplied &&
+          <div className='flex gap-8 items-center justify-between'>
+            <p className='text-sm text-green-700'>
+              Showing payments history of student: {payments && payments[0].student.name}
+            </p>
+            <Button onClick={clearFilter} variant='outline'>Show All</Button>
+          </div>
+        }
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">

@@ -87,6 +87,7 @@ const Profile = ({ studentInfo }: {studentInfo: Student}) => {
     { value: "sc-st", label: "SC/ST" },
   ];
 
+
   return (
     <Card>
       <CardHeader className="bg-gradient-to-tr from-purple-400 via-violet-400 to-indigo-400 text-white rounded-t-lg">
@@ -143,7 +144,9 @@ const Profile = ({ studentInfo }: {studentInfo: Student}) => {
                 </Select>
               ) : (
                 <Input
-                  value={studentInfo?.category || ''}
+                  value={
+                      categories.find((category) => category.value === studentInfo?.category)?.label
+                    || ''}
                   readOnly
                   className="bg-gray-100"
                 />

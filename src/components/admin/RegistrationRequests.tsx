@@ -1,4 +1,4 @@
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -31,7 +31,7 @@ interface RegistrationRequestTypeWithStudent extends RegistrationRequestType {
   } & Student
 }
 
-const RegistrationRequest = ({registrationRequests, setRegistrationRequests, setCountRegistrationRequest}
+const RegistrationRequest = ({ registrationRequests, setRegistrationRequests, setCountRegistrationRequest }
   :
   {
     registrationRequests: RegistrationRequestTypeWithStudent[],
@@ -176,7 +176,10 @@ const RegistrationRequest = ({registrationRequests, setRegistrationRequests, set
             <AlertDialogDescription className="text-base">
               <div className="space-y-4">
                 <InfoItem label="Name" value={selectedParent?.name} />
-                <InfoItem label="Email" value={selectedParent?.email} />
+                {
+                  selectedParent?.email &&
+                  <InfoItem label="Email" value={selectedParent?.email} />
+                }
                 <InfoItem label="Phone" value={selectedParent?.phone} />
               </div>
             </AlertDialogDescription>

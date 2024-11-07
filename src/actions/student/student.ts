@@ -154,7 +154,7 @@ export async function fetchParentInfo(): Promise<{ name: string; email: string; 
 
     return {
       name: parent.name,
-      email: parent.email,
+      email: parent.email ?? "",
       phone: parent.phone,
     };
 

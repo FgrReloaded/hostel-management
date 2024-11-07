@@ -35,7 +35,6 @@ const Profile = ({ studentInfo }: { studentInfo: Student }) => {
   useEffect(() => {
     (async () => {
       const info = await fetchParentInfo();
-      console.log(info);
 
       setParentInfo(info);
       setCanEdit({

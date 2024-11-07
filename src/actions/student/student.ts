@@ -98,7 +98,7 @@ export async function updateStudentProfile({
         category
       },
     });
-    if (parent.name || parent.email || parent.phone) {
+    if (parent.name || parent.phone) {
       await prisma.parent.create({
         data: {
           ...parent,
@@ -118,7 +118,6 @@ export async function updateStudentProfile({
       updatedStudent.category &&
       updatedStudent.parent &&
       updatedStudent.parent.name &&
-      updatedStudent.parent.email &&
       updatedStudent.parent.phone
     ) {
       await prisma.student.update({

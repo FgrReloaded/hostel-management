@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import prisma from "@/lib/db";
 import { Student, Payment } from "@prisma/client";
 
+
 interface StudentWithPayments extends Student {
   payments: Payment[];
 }
@@ -40,3 +41,4 @@ export async function getAllStudents(): Promise<{ error: boolean; data?: Student
     return { error: true, msg: "Something went wrong, please try again!" };
   }
 }
+

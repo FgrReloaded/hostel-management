@@ -51,11 +51,8 @@ export default function HostelLandingPage() {
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-
-
-
-
   }, [])
+
 
 
   return (

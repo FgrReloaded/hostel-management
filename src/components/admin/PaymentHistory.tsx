@@ -153,13 +153,16 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
                   <TableCell>₹{payment.amount}</TableCell>
                   <TableCell>{payment.paymentMethod}</TableCell>
                   <TableCell>
+                    {
+                      payment.screenshotImageUrl ?
                     <CldImage
-                      src={payment.screenshotImageUrl ?? ""}
-                      alt="Payment Proof"
-                      width={50}
-                      height={50}
-                      className="object-cover rounded-lg cursor-pointer"
-                    />
+                    src={payment.screenshotImageUrl ?? ""}
+                    alt="Payment Proof"
+                    width={50}
+                    height={50}
+                    className="object-cover rounded-lg cursor-pointer"
+                    /> : "No proof provided"
+                  }
                   </TableCell>
                   <TableCell>
                     <span className={`px-2 py-1 rounded-full text-xs ${payment.status === "Paid" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"

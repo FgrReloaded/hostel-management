@@ -33,8 +33,8 @@ model Student {
 model Parent {
   id         String   @id @default(cuid())
   name       String
-  email      String   @unique
-  phone      String   @unique
+  email      String?   @unique
+  phone      String
   student    Student  @relation(fields: [studentId], references: [id])
   studentId  String   @unique
   createdAt  DateTime @default(now())

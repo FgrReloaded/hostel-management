@@ -13,7 +13,7 @@ import {
 import { fetchParentInfo, updateStudentProfile } from '@/actions/student/student';
 import { Student } from '@prisma/client';
 
-const Profile = ({ studentInfo }: {studentInfo: Student}) => {
+const Profile = ({ studentInfo }: { studentInfo: Student }) => {
   const [isEditing, setIsEditing] = useState(true);
   const [editableInfo, setEditableInfo] = useState({
     address: '',
@@ -24,7 +24,7 @@ const Profile = ({ studentInfo }: {studentInfo: Student}) => {
       phone: '',
     }
   });
-  const [parentInfo, setParentInfo] = useState({name: '', email: '', phone: ''});
+  const [parentInfo, setParentInfo] = useState({ name: '', email: '', phone: '' });
 
   const [canEdit, setCanEdit] = useState({
     address: false,
@@ -35,11 +35,13 @@ const Profile = ({ studentInfo }: {studentInfo: Student}) => {
   useEffect(() => {
     (async () => {
       const info = await fetchParentInfo();
+      console.log(info);
+
       setParentInfo(info);
       setCanEdit({
         address: !studentInfo?.address,
         category: !studentInfo?.category,
-        parent: !info.name || !info.email || !info.phone
+        parent: !info.name || !info.phone
       });
     })();
   }, [studentInfo]);
@@ -145,7 +147,7 @@ const Profile = ({ studentInfo }: {studentInfo: Student}) => {
               ) : (
                 <Input
                   value={
-                      categories.find((category) => category.value === studentInfo?.category)?.label
+                    categories.find((category) => category.value === studentInfo?.category?.toLowerCase())?.label
                     || ''}
                   readOnly
                   className="bg-gray-100"

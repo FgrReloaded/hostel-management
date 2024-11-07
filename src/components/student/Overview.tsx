@@ -46,8 +46,11 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
         <CardContent className="pt-6">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="flex flex-col space-y-2">
-              <span className="text-sm font-medium text-gray-500">Room Number</span>
-              <span className="text-2xl font-bold">{studentInfo?.roomNumber ?? "Not Assigned"}</span>
+              <span className="text-sm font-medium text-gray-500">Room Number / Floor</span>
+              <span className="text-2xl font-bold">
+                {`${studentInfo?.roomNumber?.split("/")[0] + ' / ' + studentInfo?.roomNumber?.split("/")[1]}`}
+                {studentInfo?.roomNumber === null && "Not Assigned"}
+              </span>
             </div>
             {
               studentInfo?.isRegistered ?

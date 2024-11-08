@@ -42,3 +42,43 @@ export async function getAllStudents(): Promise<{ error: boolean; data?: Student
   }
 }
 
+export async function updateRoom(id: string, roomNumber: string): Promise<{ error: boolean; msg: string }> {
+  try {
+    const session = await auth();
+
+    if (!session || session?.user?.role !== "ADMIN") {
+      return { error: true, msg: "Unauthorized" };
+    }
+
+    await prisma.student.update({
+      where: {
+        id: id,
+      },
+      data: {
+        roomNumber: roomNumber,
+      },
+    });
+
+    return { error: false, msg: "Room updated successfully" };
+
+  } catch (error) {
+    console.error(error);
+    return { error: true, msg: "Something went wrong, please try again!" };
+  }
+}
+
+export async function updateAmount(amount: GLfloat) {
+  try {
+
+    await prisma.student.updateMany({
+      data: {
+        amountToPay: amount
+      },
+    });
+
+    return { error: false, msg: "Amount updated successfully" };
+  } catch (error) {
+    console.error(error);
+    return { error: true, msg: "Something went wrong, please try again!" };
+  }
+}

@@ -155,14 +155,14 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
                   <TableCell>
                     {
                       payment.screenshotImageUrl ?
-                    <CldImage
-                    src={payment.screenshotImageUrl ?? ""}
-                    alt="Payment Proof"
-                    width={50}
-                    height={50}
-                    className="object-cover rounded-lg cursor-pointer"
-                    /> : "No proof provided"
-                  }
+                        <CldImage
+                          src={payment.screenshotImageUrl ?? ""}
+                          alt="Payment Proof"
+                          width={50}
+                          height={50}
+                          className="object-cover rounded-lg cursor-pointer"
+                        /> : "No proof provided"
+                    }
                   </TableCell>
                   <TableCell>
                     <span className={`px-2 py-1 rounded-full text-xs ${payment.status === "Paid" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
@@ -226,7 +226,7 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
             <AlertDialogDescription>
               <p>Please assign a room to this student?</p>
               <div className="mt-4">
-                <Input onChange={(e) => { setAssignedRoom(e.target.value) }} placeholder="Room Number" type='number' />
+                <Input onChange={(e) => { setAssignedRoom(e.target.value) }} placeholder="Room Number / Floor" type='text' />
               </div>
               <div className="flex justify-end mt-4">
                 <AlertDialogCancel onClick={() => setIsRoomDialogOpen(false)} className="mr-2">Cancel</AlertDialogCancel>

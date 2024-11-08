@@ -48,7 +48,7 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
             <div className="flex flex-col space-y-2">
               <span className="text-sm font-medium text-gray-500">Room Number / Floor</span>
               <span className="text-2xl font-bold">
-                {`${studentInfo?.roomNumber?.split("/")[0] + ' / ' + studentInfo?.roomNumber?.split("/")[1]}`}
+                {`${studentInfo && studentInfo?.roomNumber?.split("/")[0] + ' / ' + studentInfo?.roomNumber?.split("/")[1]}`}
                 {studentInfo?.roomNumber === null && "Not Assigned"}
               </span>
             </div>

@@ -23,7 +23,6 @@ const Stats = ({ students, studentsPaid, revenueTrend, overview }: {
   }
 }) => {
 
-
   const paymentStatusData = useMemo(() => [
     { name: "Paid", value: studentsPaid },
     { name: "Unpaid", value: students.length - studentsPaid },

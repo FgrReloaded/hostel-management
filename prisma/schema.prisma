@@ -24,6 +24,7 @@ model Student {
   address          String?
   complaints       Complaint[]
   payments         Payment[]
+  amountToPay      Float   @default(6000)
   alertReceipts    AlertReceipt[]
   role             Role     @default(STUDENT)
   notificationReceipts NotificationReceipt[]
@@ -97,6 +98,7 @@ model Complaint {
   student       Student  @relation(fields: [studentId], references: [id])
   studentId     String
   complaintText String
+  complaintCategory String
   status        String   @default("Pending")
   createdAt     DateTime @default(now())
 }

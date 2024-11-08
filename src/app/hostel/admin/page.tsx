@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { UserPlus, Home, Users, DollarSign, FileText, Settings, MessageSquare } from "lucide-react"
+import { UserPlus, Home, Users, FileText, Settings, MessageSquare, Pencil, IndianRupee } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { motion } from "framer-motion"
@@ -11,18 +11,27 @@ import { ExitIcon } from "@radix-ui/react-icons"
 import Student from "@/components/admin/Student"
 import Reports from "@/components/admin/Reports"
 import PaymentHistory from "@/components/admin/PaymentHistory"
-import Complaints from "@/components/student/Complaints"
+import Complaints from "@/components/admin/ComplaintsList"
 import { Payment as PaymentType, Student as StudentType, RegistrationRequest as RegistrationRequestType, Parent } from "@prisma/client"
 import { getAllPayments } from "@/actions/payments/payment"
 import { toast } from "sonner"
 import { useRouter, useSearchParams } from "next/navigation"
 import RegistrationRequest from "@/components/admin/RegistrationRequests"
-import { getAllStudents } from "@/actions/admin/student"
+import { getAllStudents, updateRoom } from "@/actions/admin/student"
 import SettingsPage from "@/components/admin/Settings"
 import Stats from "@/components/admin/Stats"
 import { getPaymentStats } from "@/actions/admin/stats"
 import { StatsSkeleton } from "@/components/admin/skeletons/StatsSkeleton"
 import { getAllRegistrationRequests } from "@/actions/student/registration"
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+} from '@/components/ui/alert-dialog';
+import { Input } from "@/components/ui/input"
 
 interface PaymentHistoryProps extends PaymentType {
   student: {
@@ -53,8 +62,15 @@ export default function OwnerDashboard() {
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryProps[]>([]);
   const [students, setStudents] = useState<StudentWithPayments[]>([]);
   const [countRegistrationRequest, setCountRegistrationRequest] = useState(0);
+  const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false);
+  const [assignedRoom, setAssignedRoom] = useState<string | null>(null);
   const router = useRouter();
-  const [overview, setOverview] = useState({
+  const [overview, setOverview] = useState<{
+    totalRevenue: number;
+    pendingPayments: number;
+    paidStudents: number;
+    unpaidStudents: number;
+  }>({
     totalRevenue: 0,
     pendingPayments: 0,
     paidStudents: 0,
@@ -63,14 +79,6 @@ export default function OwnerDashboard() {
   const [revenueTrend, setRevenueTrend] = useState<{ month: string; revenue: number }[]>([])
   const [registrationRequests, setRegistrationRequests] = useState<RegistrationRequestTypeWithStudent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  const monthlyIncome = [
-    { month: "Jan", income: 14000 },
-    { month: "Feb", income: 14500 },
-    { month: "Mar", income: 15000 },
-    { month: "Apr", income: 15000 },
-    { month: "May", income: 15000 },
-  ]
 
 
   const currentDate = useMemo(() => new Date(), [])
@@ -153,14 +161,10 @@ export default function OwnerDashboard() {
             pendingPayments: data.pendingPayments || 0,
           }))
 
-          setRevenueTrend([
-            { month: "Jan", revenue: 42000 },
-            { month: "Feb", revenue: 45000 },
-            { month: "Mar", revenue: 48000 },
-            { month: "Apr", revenue: 51000 },
-            { month: "May", revenue: 53000 },
-            { month: "Jun", revenue: 56000 },
-          ])
+          setRevenueTrend((data?.previousMonthsRevenue ?? []).map((revenue: number, index: number) => ({
+            month: new Date(currentDate.getFullYear(), currentDate.getMonth() - index).toLocaleString('default', { month: 'short' }),
+            revenue
+          })).reverse())
         }
       } finally {
         setIsLoading(false)
@@ -189,6 +193,45 @@ export default function OwnerDashboard() {
     router.push(`?view=history&id=${selectedStudent?.id}`, undefined)
   }
 
+  useEffect(() => {
+    if (selectedStudent) {
+      setAssignedRoom(selectedStudent.roomNumber)
+    }
+  }, [selectedStudent]);
+
+  const changeRoom = async () => {
+    if (!assignedRoom) {
+      toast.error("Please enter a room number");
+      return;
+    }
+    if (!selectedStudent) {
+      return;
+    }
+
+    const { error, msg } = await updateRoom(selectedStudent?.id, assignedRoom!);
+
+    if (error) {
+      toast.error(msg);
+    } else {
+      setStudents(prev => {
+        const updatedStudents = prev.map(student => {
+          if (student.id === selectedStudent?.id) {
+            student.roomNumber = assignedRoom;
+          }
+          return student;
+        });
+        return updatedStudents;
+      });
+      setSelectedStudent(prev => {
+        if (prev) {
+          prev.roomNumber = assignedRoom;
+        }
+        return prev;
+      });
+      toast.success(msg);
+      setIsRoomDialogOpen(false);
+    }
+  }
 
   const renderView = () => {
     if (isLoading) {
@@ -205,7 +248,7 @@ export default function OwnerDashboard() {
         )
       case "reports":
         return (
-          <Reports monthlyIncome={monthlyIncome} />
+          <Reports  />
         )
       case "history":
         return (
@@ -225,7 +268,14 @@ export default function OwnerDashboard() {
                 </Avatar>
                 <div>
                   <CardTitle className="text-2xl">{selectedStudent.name}</CardTitle>
-                  <CardDescription>Room {selectedStudent?.roomNumber}</CardDescription>
+                  <CardDescription className="flex gap-2 items-center">
+                    Room <span className="font-semibold text-gray-900">{selectedStudent.roomNumber ? selectedStudent?.roomNumber?.split("/")[0] + ' / ' + selectedStudent?.roomNumber?.split("/")[1] : "Not Assigned"}</span>
+                    {
+                      selectedStudent?.roomNumber && <span>
+                        <Pencil onClick={() => { setIsRoomDialogOpen(true) }} className="h-4 w-4 text-gray-500 ml-2 cursor-pointer" />
+                      </span>
+                    }
+                  </CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -279,7 +329,7 @@ export default function OwnerDashboard() {
               { icon: Home, label: "Overview", view: "overview" },
               { icon: Users, label: "Students", view: "students" },
               { icon: FileText, label: "Reports", view: "reports" },
-              { icon: DollarSign, label: "Payment History", view: "history" },
+              { icon: IndianRupee, label: "Payment History", view: "history" },
               { icon: UserPlus, label: "Request", view: "request" },
               { icon: MessageSquare, label: "Complaints", view: "complaints" },
               { icon: Settings, label: "Settings", view: "settings" },
@@ -329,6 +379,24 @@ export default function OwnerDashboard() {
           {renderView()}
         </motion.div>
       </div>
+      <AlertDialog open={isRoomDialogOpen} onOpenChange={setIsRoomDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Payment Proof</AlertDialogTitle>
+            <AlertDialogDescription>
+              <p>Please assign a room to this student?</p>
+              <div className="mt-4">
+                <Input onChange={(e) => { setAssignedRoom(e.target.value) }} value={assignedRoom ?? ""} placeholder="Room Number / Floor" type='text' />
+              </div>
+              <div className="flex justify-end mt-4">
+                <AlertDialogCancel onClick={() => setIsRoomDialogOpen(false)} className="mr-2">Cancel</AlertDialogCancel>
+                <Button onClick={changeRoom} variant="outline">Approve</Button>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

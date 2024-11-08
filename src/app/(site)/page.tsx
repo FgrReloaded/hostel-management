@@ -54,7 +54,6 @@ export default function HostelLandingPage() {
   }, [])
 
 
-
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
       <header className={`fixed w-full z-50 transition-all duration-300 ${scrollPosition > 50 ? 'bg-white shadow-md' : 'bg-transparent'}`}>
@@ -101,7 +100,6 @@ export default function HostelLandingPage() {
           </div>
         )}
       </header>
-
       <section className="relative h-screen flex items-center justify-center text-white">
         <div className="absolute inset-0 bg-black opacity-80 z-10"></div>
         <div className="absolute inset-0 z-0">

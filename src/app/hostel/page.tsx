@@ -18,13 +18,14 @@ import History from "@/components/student/History"
 import Profile from "@/components/student/Profile"
 import Complaints from "@/components/student/Complaints"
 import { useUserProfile } from "@/hooks/useUserProfile"
-import { Payment as PaymentType, RegistrationRequest } from "@prisma/client"
+import { Complaint, Payment as PaymentType, RegistrationRequest } from "@prisma/client"
 import { toast } from "sonner"
 import { getRegistrationStatus } from "@/actions/student/registration"
 import { getPayments } from "@/actions/payments/payment"
 import { signOut } from "next-auth/react"
 import { ExitIcon } from "@radix-ui/react-icons"
 import OverViewSkeleton from "@/components/student/Skeleton/OverViewSkeleton"
+import { getComplaints } from "@/actions/student/complaints"
 
 export default function StudentDashboard() {
   const router = useRouter()
@@ -33,6 +34,7 @@ export default function StudentDashboard() {
   const [registrationStatus, setRegistrationStatus] = useState<RegistrationRequest | null>(null);
   const { userProfile: studentInfo } = useUserProfile();
   const [paymentHistory, setPaymentHistory] = useState<PaymentType[]>([]);
+  const [complaints, setComplaints] = useState<Complaint[]>([])
   const [isLoading, setIsLoading] = useState(true);
 
 
@@ -51,6 +53,18 @@ export default function StudentDashboard() {
     })();
   }, [])
 
+  useEffect(() => {
+    (async () => {
+      const { error, msg, data } = await getComplaints();
+      if (error) {
+        toast.error(msg);
+        return;
+      }
+      if (data) {
+        setComplaints(data);
+      }
+    })();
+  }, [])
 
   useEffect(() => {
     const view = searchParams.get("view")
@@ -81,7 +95,7 @@ export default function StudentDashboard() {
   }
 
   const renderView = () => {
-    if(isLoading || !studentInfo) {
+    if (isLoading || !studentInfo) {
       return <OverViewSkeleton />
     }
     switch (activeView) {
@@ -103,7 +117,7 @@ export default function StudentDashboard() {
         )
       case "complaints":
         return (
-          <Complaints />
+          <Complaints setComplaints={setComplaints} complaints={complaints} />
         )
       default:
         return null
@@ -196,7 +210,7 @@ export default function StudentDashboard() {
         >
           <h1 className="text-4xl font-bold mb-6 text-gray-800">{activeView.charAt(0).toUpperCase() + activeView.slice(1)}</h1>
           {
-            studentInfo && !studentInfo?.profileSetup  &&
+            studentInfo && !studentInfo?.profileSetup &&
             <Alert variant={"destructive"} className="mb-4" >
               <AlertTitle className="font-bold uppercase">Incomplete Profile !</AlertTitle>
 

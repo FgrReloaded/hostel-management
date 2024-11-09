@@ -18,6 +18,8 @@ const Profile = ({ studentInfo }: { studentInfo: Student }) => {
   const [editableInfo, setEditableInfo] = useState({
     address: '',
     category: '',
+    college: '',
+    course: '',
     parent: {
       name: '',
       email: '',
@@ -29,6 +31,8 @@ const Profile = ({ studentInfo }: { studentInfo: Student }) => {
   const [canEdit, setCanEdit] = useState({
     address: false,
     category: false,
+    course: false,
+    college: false,
     parent: false
   });
 
@@ -40,6 +44,8 @@ const Profile = ({ studentInfo }: { studentInfo: Student }) => {
       setCanEdit({
         address: !studentInfo?.address,
         category: !studentInfo?.category,
+        course: !studentInfo?.course,
+        college: !studentInfo?.college,
         parent: !info.name || !info.phone
       });
     })();
@@ -72,15 +78,17 @@ const Profile = ({ studentInfo }: { studentInfo: Student }) => {
   const handleSave = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     (e.target as HTMLButtonElement).textContent = "Saving...";
     await updateStudentProfile({
-      address: editableInfo.address,
-      category: editableInfo.category,
+      address: editableInfo.address.trim() === '' ? studentInfo?.address ?? '' : editableInfo.address,
+      category: editableInfo.category.trim() === '' ? studentInfo?.category ?? '' : editableInfo.category,
+      course: editableInfo.course.trim() === '' ? studentInfo?.course ?? '' : editableInfo.course,
+      college: editableInfo.college.trim() === '' ? studentInfo?.college ?? '' : editableInfo.college,
       parent: editableInfo.parent
     });
     window.location.reload();
     setIsEditing(false);
   };
 
-  const isAnyFieldEditable = canEdit.address || canEdit.parent;
+  const isAnyFieldEditable = canEdit.address || canEdit.parent || canEdit.category || canEdit.course || canEdit.college;
 
   const categories = [
     { value: "general", label: "General" },
@@ -123,6 +131,26 @@ const Profile = ({ studentInfo }: { studentInfo: Student }) => {
                 readOnly={!canEdit.address || !isEditing}
                 className={canEdit.address && isEditing ? "" : "bg-gray-100"}
                 placeholder={canEdit.address ? "Enter your address" : ""}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Course</Label>
+              <Input
+                value={canEdit.course ? (isEditing ? editableInfo.course : '') : studentInfo?.course || ''}
+                onChange={(e) => handleInputChange(e, 'course')}
+                readOnly={!canEdit.course || !isEditing}
+                className={canEdit.course && isEditing ? "" : "bg-gray-100"}
+                placeholder={canEdit.course ? "Enter your course" : ""}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>College</Label>
+              <Input
+                value={canEdit.college ? (isEditing ? editableInfo.college : '') : studentInfo?.college || ''}
+                onChange={(e) => handleInputChange(e, 'college')}
+                readOnly={!canEdit.college || !isEditing}
+                className={canEdit.college && isEditing ? "" : "bg-gray-100"}
+                placeholder={canEdit.college ? "Enter your college" : ""}
               />
             </div>
             <div className="space-y-2">

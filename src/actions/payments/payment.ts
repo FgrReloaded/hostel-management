@@ -91,7 +91,7 @@ export async function createNewPayment({
       return { error: true, msg: "Unauthorized" };
     }
 
-    if (amount !== 3500) {
+    if (amount === 6000) {
       await prisma.payment.create({
         data: {
           studentId: session?.user.id,

@@ -78,7 +78,7 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
   }
 
   const openRoomDialog = (id: bigint, amount: number) => {
-    if (amount === 3500) {
+    if (amount !== 6000) {
       updatePayment(id, "approve");
       return;
     }

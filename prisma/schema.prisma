@@ -19,6 +19,8 @@ model Student {
   isRegistered     Boolean  @default(false)
   createdAt        DateTime @default(now())
   category         String?
+  course           String?
+  college          String?
   updatedAt        DateTime @updatedAt
   parent           Parent?
   address          String?

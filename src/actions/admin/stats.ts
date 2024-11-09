@@ -14,7 +14,9 @@ export async function getPaymentStats(): Promise<{ error: boolean; msg: string; 
 
     const totalRevenue = await prisma.payment.aggregate({
       where: {
-        amount: 3500,
+        amount: {
+          not: 6000
+        },
         status: "Paid"
       },
       _sum: {

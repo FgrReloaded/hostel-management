@@ -4,8 +4,6 @@ import { auth } from "@/auth";
 import prisma from "@/lib/db";
 import { Complaint } from "@prisma/client";
 
-// interface complain with student roomNumber
-
 interface ComplaintWithStudent extends Complaint {
   student: {
     roomNumber: string | null;

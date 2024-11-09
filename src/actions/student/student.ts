@@ -79,8 +79,8 @@ export async function createUser(User: User): Promise<{ error: boolean; msg: str
   }
 }
 
-export async function updateStudentProfile({
-  address, parent, category }: { address: string; category: string, parent: { name: string; email: string; phone: string } }
+export async function updateStudentProfile(
+  { address, category, course, college, parent }: { address: string; category: string, course: string, college: string, parent: { name: string; email: string; phone: string } }
 ): Promise<{ error: boolean; msg: string }> {
   try {
     const session = await auth();
@@ -88,14 +88,16 @@ export async function updateStudentProfile({
     if (!session) {
       return { error: true, msg: "Unauthorized" };
     }
-
+    console.log(address, category, course, college)
     await prisma.student.update({
       where: {
         id: session?.user.id,
       },
       data: {
         address,
-        category
+        category,
+        course,
+        college
       },
     });
     if (parent.name || parent.phone) {
@@ -116,6 +118,8 @@ export async function updateStudentProfile({
       updatedStudent &&
       updatedStudent.address &&
       updatedStudent.category &&
+      updatedStudent.college &&
+      updatedStudent.course &&
       updatedStudent.parent &&
       updatedStudent.parent.name &&
       updatedStudent.parent.phone

@@ -13,7 +13,7 @@ interface StudentWithPayments extends Student {
 export async function getAllStudents(): Promise<{ error: boolean; data?: StudentWithPayments[]; msg: string }> {
   try {
     const session = await auth();
-
+    console.time("getAllStudents");
     if (!session || session?.user?.role !== "ADMIN") {
       return { error: true, msg: "Unauthorized" };
     }
@@ -32,7 +32,7 @@ export async function getAllStudents(): Promise<{ error: boolean; data?: Student
       return { error: false, msg: "No students found" };
     }
 
-
+    console.timeEnd("getAllStudents");
 
     return { error: false, msg: "Success", data: students };
 
@@ -67,14 +67,33 @@ export async function updateRoom(id: string, roomNumber: string): Promise<{ erro
   }
 }
 
-export async function updateAmount(amount: GLfloat) {
+export async function updateAmount(id: string, amount: GLfloat) {
   try {
+    const session = await auth();
 
-    await prisma.student.updateMany({
-      data: {
-        amountToPay: amount
+    if (!session || session?.user?.role !== "ADMIN") {
+      return { error: true, msg: "Unauthorized" };
+    }
+
+    const student = await prisma.student.findUnique({
+      where: {
+        id: id,
       },
     });
+
+    if (!student) {
+      return { error: true, msg: "Student not found" };
+    }
+
+    await prisma.student.update({
+      where: {
+        id: id,
+      },
+      data: {
+        amountToPay: amount,
+      },
+    });
+
 
     return { error: false, msg: "Amount updated successfully" };
   } catch (error) {

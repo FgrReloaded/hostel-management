@@ -33,7 +33,7 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
     window.location.reload();
   }
 
-  const monthlyPaid = paymentHistory[0]?.amount === 3500 && paymentHistory[0]?.status === "Paid" && paymentHistory[0]?.month === new Date().getMonth() + 1 && paymentHistory[0]?.year === new Date().getFullYear();
+  const monthlyPaid = paymentHistory[0]?.amount === studentInfo?.amountToPay && paymentHistory[0]?.status === "Paid" && paymentHistory[0]?.month === new Date().getMonth() + 1 && paymentHistory[0]?.year === new Date().getFullYear();
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -48,7 +48,7 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
             <div className="flex flex-col space-y-2">
               <span className="text-sm font-medium text-gray-500">Room Number / Floor</span>
               <span className="text-2xl font-bold">
-                {`${studentInfo && studentInfo?.roomNumber?.split("/")[0] + ' / ' + studentInfo?.roomNumber?.split("/")[1]}`}
+                {`${studentInfo?.roomNumber ? (studentInfo?.roomNumber?.split("/")[0] + ' / ' + studentInfo?.roomNumber?.split("/")[1]):""}`}
                 {studentInfo?.roomNumber === null && "Not Assigned"}
               </span>
             </div>
@@ -57,7 +57,7 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
                 <>
                   <div className="flex flex-col space-y-2">
                     <span className="text-sm font-medium text-gray-500">Monthly Rent</span>
-                    ₹3500
+                    ₹ {studentInfo?.amountToPay}
                   </div>
                   <div className="flex flex-col space-y-2">
                     <span className="text-sm font-medium text-gray-500">Next Payment Due</span>
@@ -68,7 +68,7 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
                     </span>
                   </div>
                   <div className="flex flex-col space-y-2">
-                    <span className="text-sm font-medium text-gray-500">Monthly Fee</span>
+                    <span className="text-sm font-medium text-gray-500">Monthly Fees</span>
                     <Badge variant="default" className="w-fit">
                       {monthlyPaid ? "Paid" : "Pending"}
                     </Badge>

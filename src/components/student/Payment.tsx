@@ -18,7 +18,7 @@ import { Input } from '../ui/input';
 import { Student } from '@prisma/client';
 
 
-const Payment = ({ studentInfo }: {studentInfo: Student}) => {
+const Payment = ({ studentInfo }: { studentInfo: Student }) => {
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
   const [uploadedImage, setUploadedImage] = useState<Record<string, string>>({
     public_id: "",
@@ -41,13 +41,13 @@ const Payment = ({ studentInfo }: {studentInfo: Student}) => {
 
   // @ts-expect-error-ignore
   const handleSuccess = (result) => {
-      setUploadedImage(
-        {
-          public_id: result.info.public_id,
-          secure_url: result.info.secure_url
-        }
-      );
-    }
+    setUploadedImage(
+      {
+        public_id: result.info.public_id,
+        secure_url: result.info.secure_url
+      }
+    );
+  }
 
   const onUpload = async () => {
 
@@ -60,7 +60,7 @@ const Payment = ({ studentInfo }: {studentInfo: Student}) => {
       paymentMethod,
       referrenceNo,
       screenshotImageUrl: uploadedImage.public_id,
-      amount: studentInfo?.isRegistered ? 3500 : 6000
+      amount: studentInfo?.isRegistered ? studentInfo?.amountToPay : 6000
     });
 
     if (error) {
@@ -80,13 +80,13 @@ const Payment = ({ studentInfo }: {studentInfo: Student}) => {
   return (
     <Card>
       <CardHeader className="bg-gradient-to-tr from-purple-400 via-violet-400 to-indigo-400 text-white rounded-t-lg">
-        <CardTitle className="text-2xl">Make Payment</CardTitle>
+        <CardTitle className="text-2xl">Make Mess Payment</CardTitle>
         <CardDescription className="text-blue-100">Choose your payment method and confirm the payment</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 pt-6">
         <div className="flex justify-between items-center p-4 bg-gray-100 rounded-lg">
           <span className="text-lg font-medium">Amount Due:</span>
-          <span className="text-2xl font-bold">₹{studentInfo?.isRegistered ? "3500" : "6000"}</span>
+          <span className="text-2xl font-bold">₹{studentInfo?.isRegistered ? studentInfo?.amountToPay : "6000"}</span>
         </div>
         <div className="space-y-2">
           <Label htmlFor="payment-method">Payment Method</Label>
@@ -141,7 +141,7 @@ const Payment = ({ studentInfo }: {studentInfo: Student}) => {
                 <Label htmlFor="referrence-no">Referrence No</Label>
                 <Input type="text" id="referrence-no" className="w-full border border-gray-200 rounded-lg p-3" placeholder="Enter referrence number (If any)"
                   value={referrenceNo}
-                  onChange={(e) => setReferrenceNo(e.target.value)}/>
+                  onChange={(e) => setReferrenceNo(e.target.value)} />
               </div>
 
             </div>

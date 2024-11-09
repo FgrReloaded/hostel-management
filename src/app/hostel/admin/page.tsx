@@ -17,7 +17,7 @@ import { getAllPayments } from "@/actions/payments/payment"
 import { toast } from "sonner"
 import { useRouter, useSearchParams } from "next/navigation"
 import RegistrationRequest from "@/components/admin/RegistrationRequests"
-import { getAllStudents, updateRoom } from "@/actions/admin/student"
+import { getAllStudents, updateAmount, updateRoom } from "@/actions/admin/student"
 import SettingsPage from "@/components/admin/Settings"
 import Stats from "@/components/admin/Stats"
 import { getPaymentStats } from "@/actions/admin/stats"
@@ -63,7 +63,9 @@ export default function OwnerDashboard() {
   const [students, setStudents] = useState<StudentWithPayments[]>([]);
   const [countRegistrationRequest, setCountRegistrationRequest] = useState(0);
   const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false);
+  const [isFeeAmountDialogOpen, setIsFeeAmountDialogOpen] = useState(false);
   const [assignedRoom, setAssignedRoom] = useState<string | null>(null);
+  const [dayPresent, setDayPresent] = useState<number>(0);
   const router = useRouter();
   const [overview, setOverview] = useState<{
     totalRevenue: number;
@@ -89,10 +91,9 @@ export default function OwnerDashboard() {
     return students.map(student => {
       const lastPayment = student.payments[0]
       const isPaid = lastPayment &&
-        lastPayment.amount === 3500 &&
+        lastPayment.amount === student.amountToPay &&
         lastPayment.month === currentMonth &&
         lastPayment.year === currentYear
-
       return {
         ...student,
         status: isPaid ? lastPayment.status : 'Unpaid',
@@ -195,7 +196,7 @@ export default function OwnerDashboard() {
 
   useEffect(() => {
     if (selectedStudent) {
-      setAssignedRoom(selectedStudent.roomNumber)
+      setAssignedRoom(selectedStudent.roomNumber);
     }
   }, [selectedStudent]);
 
@@ -233,6 +234,40 @@ export default function OwnerDashboard() {
     }
   }
 
+  const changeAmount = async () => {
+    if (!dayPresent) {
+      toast.error("Please enter the day student was present in the hostel");
+      return;
+    }
+    if (!selectedStudent) {
+      return;
+    }
+
+    const { error, msg } = await updateAmount(selectedStudent?.id, dayPresent * 200);
+
+    if (error) {
+      toast.error(msg);
+    } else {
+      setStudents(prev => {
+        const updatedStudents = prev.map(student => {
+          if (student.id === selectedStudent?.id) {
+            student.amountToPay = dayPresent * 200;
+          }
+          return student;
+        });
+        return updatedStudents;
+      });
+      setSelectedStudent(prev => {
+        if (prev) {
+          prev.amountToPay = dayPresent * 200;
+        }
+        return prev;
+      });
+      toast.success(msg);
+      setIsFeeAmountDialogOpen(false);
+    }
+  }
+
   const renderView = () => {
     if (isLoading) {
       return <StatsSkeleton />
@@ -248,7 +283,7 @@ export default function OwnerDashboard() {
         )
       case "reports":
         return (
-          <Reports  />
+          <Reports />
         )
       case "history":
         return (
@@ -290,12 +325,24 @@ export default function OwnerDashboard() {
                   <p>{selectedStudent.phone}</p>
                 </div>
                 <div>
+                  <p className="font-semibold text-indigo-700">Course</p>
+                  <p>{selectedStudent.course}</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-indigo-700">College</p>
+                  <p>{selectedStudent.college}</p>
+                </div>
+                <div>
                   <p className="font-semibold text-indigo-700">Registration Status</p>
                   <p>{selectedStudent.isRegistered ? 'Registered' : 'Not Registered'}</p>
                 </div>
                 <div>
-                  <p className="font-semibold text-indigo-700">Fees</p>
-                  <p>₹ 3500</p>
+                  <p className="font-semibold text-indigo-700">Fees to be paid</p>
+                  <p className="flex gap-2 items-center">₹ {selectedStudent.amountToPay}
+                    <span>
+                      <Pencil onClick={() => { setIsFeeAmountDialogOpen(true) }} className="h-4 w-4 text-gray-500 ml-2 cursor-pointer" />
+                    </span>
+                  </p>
                 </div>
               </div>
               <div className="mt-6 space-y-4">
@@ -391,6 +438,26 @@ export default function OwnerDashboard() {
               <div className="flex justify-end mt-4">
                 <AlertDialogCancel onClick={() => setIsRoomDialogOpen(false)} className="mr-2">Cancel</AlertDialogCancel>
                 <Button onClick={changeRoom} variant="outline">Approve</Button>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={isFeeAmountDialogOpen} onOpenChange={setIsFeeAmountDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Update Fees Amount</AlertDialogTitle>
+            <AlertDialogDescription>
+              <p>
+                Please enter the day student was present in the hostel
+              </p>
+              <div className="mt-4">
+                <Input onChange={(e) => { setDayPresent(parseInt(e.target.value)) }} value={dayPresent ?? 0} placeholder="No of days present" type='number' />
+              </div>
+              <div className="flex justify-end mt-4">
+                <AlertDialogCancel onClick={() => setIsFeeAmountDialogOpen(false)} className="mr-2">Cancel</AlertDialogCancel>
+                <Button onClick={changeAmount} variant="outline">Update</Button>
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>

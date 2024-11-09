@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation'
 import { getAdmin } from '@/actions/admin/auth'
 import GalleryHome from '@/components/GalleryHome'
 import Features from '@/components/Features'
+import Image from 'next/image'
 
 
 export default function HostelLandingPage() {
@@ -57,13 +58,7 @@ export default function HostelLandingPage() {
     <div className="min-h-screen bg-gray-50 font-sans">
       <header className={`fixed w-full z-50 transition-all duration-300 ${scrollPosition > 50 ? 'bg-white shadow-md' : 'bg-transparent'}`}>
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <a href="#" className="text-2xl font-bold text-blue-600">SBP Bhawan</a>
-          <nav className="hidden md:flex space-x-6">
-            <a href="#features" className="text-blue-500 hover:text-blue-600 transition-colors">Features</a>
-            <a href="#gallery" className="text-blue-500 hover:text-blue-600 transition-colors">Gallery</a>
-            <a href="#testimonials" className="text-blue-500 hover:text-blue-600 transition-colors">Testimonials</a>
-            <a href="#contact" className="text-blue-500 hover:text-blue-600 transition-colors">Contact</a>
-          </nav>
+          <a href="#" className="text-2xl font-bold text-blue-600">Savitribai Phule Bhawan</a>
           {
             session ?
               <Link href={session.user?.role === "ADMIN" ? "/hostel/admin" : "/hostel"} className="hidden md:block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors">
@@ -104,7 +99,7 @@ export default function HostelLandingPage() {
         <div className="absolute inset-0 bg-black opacity-80 z-10"></div>
         <div className="absolute inset-0 z-0">
           <img
-            src=".././hostel.jpg"
+            src="/front.jpeg"
             alt="Hostel exterior"
             className="w-full h-full object-cover"
           />
@@ -155,19 +150,19 @@ export default function HostelLandingPage() {
           <h2 className="text-4xl font-bold text-center mb-16 text-gray-800">Hostel Administration</h2>
           <div className="flex justify-center items-center gap-12">
             <div className="text-center transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 p-6 rounded-xl">
-              <img src="/placeholder.svg?height=200&width=200" alt="Staff member" className="rounded-full mx-auto mb-6 border-4 border-blue-500" />
+              <Image width={200} height={200} objectFit='cover' src="/admins/warden.jpeg" alt="Staff member" className="rounded-full mx-auto mb-6 border-4 border-blue-500" />
               <h3 className="text-2xl font-semibold mb-2 text-gray-800">Prof. Archana Singh</h3>
               <p className="text-blue-600 mb-4">Warden</p>
               <p className="text-gray-600">With 10 years of experience in hospitality, Jane ensures your stay is nothing short of amazing.</p>
             </div>
             <div className="text-center transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 p-6 rounded-xl">
-              <img src="/placeholder.svg?height=200&width=200" alt="Staff member" className="rounded-full mx-auto mb-6 border-4 border-blue-500" />
+              <Image width={200} height={200} objectFit='cover' src="/admins/vcmam.jpeg" alt="Staff member" className="rounded-full mx-auto mb-6 border-4 border-blue-500" />
               <h3 className="text-2xl font-semibold mb-2 text-gray-800">Prof. Anshu Rani</h3>
               <p className="text-blue-600 mb-4">Vice Chancellor, Dr. Bhimrao Ambedkar University ,Agra</p>
               <p className="text-gray-600">John&apos;s friendly demeanor and local knowledge make check-ins a breeze and your stay more enjoyable.</p>
             </div>
             <div className="text-center transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 p-6 rounded-xl">
-              <img src="/placeholder.svg?height=200&width=200" alt="Staff member" className="rounded-full mx-auto mb-6 border-4 border-blue-500" />
+              <Image width={200} height={200} objectFit='cover' src="/admins/assistwarden.png" alt="Staff member" className="rounded-full mx-auto mb-6 border-4 border-blue-500" />
               <h3 className="text-2xl font-semibold mb-2 text-gray-800">Dr. Ratna Pandey</h3>
               <p className="text-blue-600 mb-4">Assistant Warden</p>
               <p className="text-gray-600">Emily&apos;s creative events bring guests together, creating unforgettable memories and new friendships.</p>
@@ -227,9 +222,9 @@ export default function HostelLandingPage() {
 
       <footer className="bg-gray-800 text-white py-12">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="flex justify-between px-16">
             <div>
-              <h3 className="text-2xl font-bold mb-4">SBP Bhawan</h3>
+              <h3 className="text-2xl font-bold mb-4">Savitribai Phule Bhawan</h3>
               <p className="mb-4">Your home away from home, where adventures begin and memories are made.</p>
               <div className="flex space-x-4">
                 <a href="#" className="text-white hover:text-blue-400 transition-colors">
@@ -250,35 +245,16 @@ export default function HostelLandingPage() {
               </div>
             </div>
             <div>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="hover:text-blue-400 transition-colors">Home</a></li>
-                <li><a href="#features" className="hover:text-blue-400 transition-colors">Features</a></li>
-                <li><a href="#gallery" className="hover:text-blue-400 transition-colors">Gallery</a></li>
-                <li><a href="#testimonials" className="hover:text-blue-400 transition-colors">Testimonials</a></li>
-                <li><a href="#contact" className="hover:text-blue-400 transition-colors">Contact</a></li>
-              </ul>
-            </div>
-            <div>
               <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
-              <p className="mb-2">123 Traveler&apos;s Street</p>
-              <p className="mb-2">Adventureville, EX 12345</p>
-              <p className="mb-2">Phone: (123) 456-7890</p>
-              <p>Email: info@travelershaven.com</p>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Newsletter</h4>
-              <p className="mb-4">Subscribe to our newsletter for the latest updates and offers.</p>
-              <form className="flex">
-                <Input type="email" placeholder="Your email" className="rounded-r-none" />
-                <Button type="submit" className="rounded-l-none bg-blue-600 hover:bg-blue-700">
-                  Subscribe
-                </Button>
-              </form>
+              <p className="mb-2">Savitribai Phule Bhawan, 100 Capacity Girls Hostel,</p>
+              <p className="mb-2">Dr Bhimrao Ambedkar University,</p>
+              <p className='mb-2'>Swami Vivekanand Khandari Campus, Agra 282002 UP</p>
+              <p className="mb-2">Phone: <a href='phone:9105969848'>+91 9105969848</a></p>
+              <p>Email: <a href="mailto:100capacitygirlshostel@gmail.com">100capacitygirlshostel@gmail.com</a></p>
             </div>
           </div>
           <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-            <p>&copy; {new Date().getFullYear()} SBP Bhawan. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} 1. Savitribai Phule Bhawan. All rights reserved.</p>
           </div>
         </div>
       </footer>

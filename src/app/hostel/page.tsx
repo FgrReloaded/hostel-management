@@ -133,7 +133,7 @@ export default function StudentDashboard() {
         className="w-64 bg-white shadow-lg"
       >
         <div className="p-6">
-          <h2 className="text-2xl uppercase text-center font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-tr from-purple-800 via-violet-600 to-indigo-800">SBP Bhawan</h2>
+          <h2 className="text-2xl text-center uppercase text-center font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-tr from-purple-800 via-violet-600 to-indigo-800">Savitribai Phule Bhawan</h2>
           <nav className="space-y-3">
             <Button
               variant={activeView === "overview" ? "default" : "ghost"}

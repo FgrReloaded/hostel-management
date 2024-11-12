@@ -1,11 +1,9 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { UserPlus, Home, Users, FileText, Settings, MessageSquare, Pencil, IndianRupee, X } from "lucide-react"
+import { UserPlus, Home, Users, FileText, Settings, MessageSquare, IndianRupee, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { motion } from "framer-motion"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { signOut } from "next-auth/react"
 import { ExitIcon } from "@radix-ui/react-icons"
 import Student from "@/components/admin/Student"
@@ -17,7 +15,7 @@ import { getAllPayments } from "@/actions/payments/payment"
 import { toast } from "sonner"
 import { useRouter, useSearchParams } from "next/navigation"
 import RegistrationRequest from "@/components/admin/RegistrationRequests"
-import { getAllStudents, updateAmount, updateRoom } from "@/actions/admin/student"
+import { getAllStudents, updateAmount, updateFees, updateRoom } from "@/actions/admin/student"
 import SettingsPage from "@/components/admin/Settings"
 import Stats from "@/components/admin/Stats"
 import { getPaymentStats } from "@/actions/admin/stats"
@@ -32,6 +30,7 @@ import {
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
 import { Input } from "@/components/ui/input"
+import StudentDetails from "@/components/admin/StudentDetails"
 
 interface PaymentHistoryProps extends PaymentType {
   student: {
@@ -64,6 +63,8 @@ export default function OwnerDashboard() {
   const [countRegistrationRequest, setCountRegistrationRequest] = useState(0);
   const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false);
   const [isFeeAmountDialogOpen, setIsFeeAmountDialogOpen] = useState(false);
+  const [isFeesPaid, setIsFeesPaid] = useState(false);
+  const [amountPaid, setAmountPaid] = useState<number>(0);
   const [assignedRoom, setAssignedRoom] = useState<string | null>(null);
   const [dayPresent, setDayPresent] = useState<number>(0);
   const router = useRouter();
@@ -136,7 +137,6 @@ export default function OwnerDashboard() {
     (async () => {
       const { error, data } = await getAllStudents();
       if (error) {
-        toast.error("Something went wrong");
         return;
       }
       if (!data) return;
@@ -268,6 +268,25 @@ export default function OwnerDashboard() {
     }
   }
 
+  const updateFeesAmount = async () => {
+    if (!amountPaid) {
+      toast.error("Please enter the amount paid by the student");
+      return;
+    }
+    if (!selectedStudent) {
+      return;
+    }
+    const { error, msg } = await updateFees(selectedStudent?.id, amountPaid);
+
+    if (error) {
+      toast.error(msg);
+    } else {
+      toast.success(msg);
+      setIsFeesPaid(false);
+      window.location.reload();
+    }
+  }
+
   const renderView = () => {
     if (isLoading) {
       return <StatsSkeleton />
@@ -294,63 +313,7 @@ export default function OwnerDashboard() {
       case "studentProfile":
         if (!selectedStudent) return null
         return (
-          <Card className="max-w-2xl mx-auto">
-            <CardHeader>
-              <div className="flex items-center space-x-4">
-                <Avatar className="w-16 h-16">
-                  <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${selectedStudent.name}`} alt={selectedStudent.name} />
-                  <AvatarFallback>{selectedStudent.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <CardTitle className="text-2xl">{selectedStudent.name}</CardTitle>
-                  <CardDescription className="flex gap-2 items-center">
-                    Room <span className="font-semibold text-gray-900">{selectedStudent.roomNumber ? selectedStudent?.roomNumber?.split("/")[0] + ' / ' + selectedStudent?.roomNumber?.split("/")[1] : "Not Assigned"}</span>
-                    {
-                      selectedStudent?.roomNumber && <span>
-                        <Pencil onClick={() => { setIsRoomDialogOpen(true) }} className="h-4 w-4 text-gray-500 ml-2 cursor-pointer" />
-                      </span>
-                    }
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="font-semibold text-indigo-700">Email</p>
-                  <p>{selectedStudent.email}</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-indigo-700">Phone</p>
-                  <p>{selectedStudent.phone}</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-indigo-700">Course</p>
-                  <p>{selectedStudent.course}</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-indigo-700">College</p>
-                  <p>{selectedStudent.college}</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-indigo-700">Registration Status</p>
-                  <p>{selectedStudent.isRegistered ? 'Registered' : 'Not Registered'}</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-indigo-700">Fees to be paid</p>
-                  <p className="flex gap-2 items-center">₹ {selectedStudent.amountToPay}
-                    <span>
-                      <Pencil onClick={() => { setIsFeeAmountDialogOpen(true) }} className="h-4 w-4 text-gray-500 ml-2 cursor-pointer" />
-                    </span>
-                  </p>
-                </div>
-              </div>
-              <div className="mt-6 space-y-4">
-                <Button className="w-full bg-indigo-600 hover:bg-indigo-700">Send Payment Reminder</Button>
-                <Button onClick={showPaymentHistory} variant="outline" className="w-full">View Payment History</Button>
-              </div>
-            </CardContent>
-          </Card>
+          <StudentDetails setIsFeesPaid={setIsFeesPaid} selectedStudent={selectedStudent} showPaymentHistory={showPaymentHistory} setIsRoomDialogOpen={setIsRoomDialogOpen} setIsFeeAmountDialogOpen={setIsFeeAmountDialogOpen} />
         )
       case "complaints":
         return (
@@ -370,7 +333,7 @@ export default function OwnerDashboard() {
         className="w-64 bg-white shadow-lg"
       >
         <div className="p-6">
-          <div className="text-right absolute right-2 top-2 w-fit mb-2 rounded-full bg-gray-200 p-2">
+          <div className="md:hidden text-right absolute right-2 top-2 w-fit mb-2 rounded-full bg-gray-200 p-2">
             <X className="h-4 w-4 cursor-pointer" onClick={() => router.push("/")} />
           </div>
           <h2 className="text-2xl text-center font-bold mb-6 mt-4 text-indigo-700">Savitribai Phule Bhawan</h2>
@@ -461,6 +424,26 @@ export default function OwnerDashboard() {
               <div className="flex justify-end mt-4">
                 <AlertDialogCancel onClick={() => setIsFeeAmountDialogOpen(false)} className="mr-2">Cancel</AlertDialogCancel>
                 <Button onClick={changeAmount} variant="outline">Update</Button>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={isFeesPaid} onOpenChange={setIsFeesPaid}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Update Fees Status</AlertDialogTitle>
+            <AlertDialogDescription>
+              <p>
+                Please enter the amount paid by student
+              </p>
+              <div className="mt-4">
+                <Input onChange={(e) => { setAmountPaid(parseInt(e.target.value)) }} value={amountPaid ?? 0} placeholder="Amount paid" type='number' />
+              </div>
+              <div className="flex justify-end mt-4">
+                <AlertDialogCancel onClick={() => setIsFeesPaid(false)} className="mr-2">Cancel</AlertDialogCancel>
+                <Button onClick={updateFeesAmount} variant="outline">Update</Button>
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>

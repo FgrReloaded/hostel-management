@@ -101,3 +101,41 @@ export async function updateAmount(id: string, amount: GLfloat) {
     return { error: true, msg: "Something went wrong, please try again!" };
   }
 }
+
+export async function updateFees(id: string, amount: GLfloat): Promise<{ error: boolean; msg: string }> {
+  try {
+    const session = await auth();
+
+    if (!session || session?.user?.role !== "ADMIN") {
+      return { error: true, msg: "Unauthorized" };
+    }
+
+    const student = await prisma.student.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!student) {
+      return { error: true, msg: "Student not found" };
+    }
+
+    await prisma.payment.create({
+      data: {
+        studentId: id,
+        amount: amount,
+        paymentMethod: "CASH",
+        isVerified: true,
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+        status: "Paid",
+      },
+    });
+
+
+    return { error: false, msg: "Fees updated successfully" };
+  } catch (error) {
+    console.error(error);
+    return { error: true, msg: "Something went wrong, please try again!" };
+  }
+}

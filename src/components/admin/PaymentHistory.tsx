@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { CldImage } from "next-cloudinary";
 import { Button } from "../ui/button";
-import { Check, Eye, X } from "lucide-react";
+import { Check, Download, Eye, Printer, X } from "lucide-react";
 import { updatePaymentStatus } from "@/actions/payments/payment";
 import { toast } from "sonner";
 import {
@@ -26,6 +26,8 @@ import { Input } from '../ui/input';
 import { Payment } from '@prisma/client';
 import { StudentSkeleton } from './skeletons/StudentSkeleton';
 import { useSearchParams } from 'next/navigation';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import ReceiptContent from './ReceiptContent';
 
 
 interface PaymentHistoryProps extends Payment {
@@ -47,6 +49,8 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
   const [selectedRoom, setSelectedRoom] = useState<bigint | null>(null);
   const [assignedRoom, setAssignedRoom] = useState<string | null>(null);
   const [isFilterApplied, setIsFilterApplied] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentHistoryProps | null>(null);
+  const [isReceiptShow, setIsReceiptShow] = useState(false);
   const searchParams = useSearchParams()
 
 
@@ -104,6 +108,11 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
     setPayments(paymentHistory);
     setIsFilterApplied(false);
   }
+
+  const handlePrint = () => {
+    window.print()
+  }
+
 
   return (
     <Card>
@@ -188,6 +197,15 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
                     )} variant="outline" className="mr-2">
                       <Eye size={20} />
                     </Button>
+                    {
+                      payment.status === "Paid" &&
+                      <Button onClick={() => {
+                        setIsReceiptShow(true);
+                        setSelectedPayment(payment);
+                      }} variant="outline" className="mr-2">
+                        <Download size={20} />
+                      </Button>
+                    }
                   </TableCell>
                 </TableRow>
               ))}
@@ -237,6 +255,26 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
 
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={isReceiptShow} onOpenChange={()=>setIsReceiptShow(false)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Payment Receipt</DialogTitle>
+          </DialogHeader>
+          {
+            selectedPayment &&
+             <ReceiptContent payment={selectedPayment} />
+          }
+          <div className="flex justify-end space-x-2 mt-4">
+            <Button onClick={handlePrint}>
+              <Printer className="mr-2 h-4 w-4" /> Print
+            </Button>
+            {/* <Button>
+              <Download className="mr-2 h-4 w-4" /> Download PDF
+            </Button> */}
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 }

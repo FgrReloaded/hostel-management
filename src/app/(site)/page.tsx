@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Star, ChevronLeft, ChevronRight, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -12,28 +12,14 @@ import { getAdmin } from '@/actions/admin/auth'
 import GalleryHome from '@/components/GalleryHome'
 import Features from '@/components/Features'
 import Image from 'next/image'
+import Testimonials from '@/components/Testimonials'
 
 
 export default function HostelLandingPage() {
-  const [currentTestimonial, setCurrentTestimonial] = useState(0)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrollPosition, setScrollPosition] = useState(0)
   const { data: session } = useSession()
   const navigate = useRouter();
-
-  const testimonials = [
-    { name: "Alex Johnson", text: "Best hostel experience ever! The staff was incredibly friendly and the facilities were top-notch." },
-    { name: "Maria Garcia", text: "I loved the community vibe and how easy it was to meet other travelers. Will definitely come back!" },
-    { name: "Liam Brown", text: "The location is perfect and the rooms are always clean. It's my go-to place whenever I'm in town." },
-  ]
-
-  const nextTestimonial = () => {
-    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)
-  }
-
-  const prevTestimonial = () => {
-    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length)
-  }
 
   useEffect(() => {
     (async () => {
@@ -99,7 +85,7 @@ export default function HostelLandingPage() {
         <div className="absolute inset-0 bg-black opacity-80 z-10"></div>
         <div className="absolute inset-0 z-0">
           <img
-            src="/front.jpeg"
+            src="/hostel.jpeg"
             alt="Hostel exterior"
             className="w-full h-full object-cover"
           />
@@ -153,49 +139,22 @@ export default function HostelLandingPage() {
               <Image width={200} height={200} objectFit='cover' src="/admins/warden.jpeg" alt="Staff member" className="rounded-full mx-auto mb-6 border-4 border-blue-500" />
               <h3 className="text-2xl font-semibold mb-2 text-gray-800">Prof. Archana Singh</h3>
               <p className="text-blue-600 mb-4">Warden</p>
-              <p className="text-gray-600">With 10 years of experience in hospitality, Jane ensures your stay is nothing short of amazing.</p>
             </div>
             <div className="text-center transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 p-6 rounded-xl">
               <Image width={200} height={200} objectFit='cover' src="/admins/vcmam.jpeg" alt="Staff member" className="rounded-full mx-auto mb-6 border-4 border-blue-500" />
               <h3 className="text-2xl font-semibold mb-2 text-gray-800">Prof. Anshu Rani</h3>
               <p className="text-blue-600 mb-4">Vice Chancellor, Dr. Bhimrao Ambedkar University ,Agra</p>
-              <p className="text-gray-600">John&apos;s friendly demeanor and local knowledge make check-ins a breeze and your stay more enjoyable.</p>
             </div>
             <div className="text-center transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 p-6 rounded-xl">
               <Image width={200} height={200} objectFit='cover' src="/admins/assistwarden.png" alt="Staff member" className="rounded-full mx-auto mb-6 border-4 border-blue-500" />
               <h3 className="text-2xl font-semibold mb-2 text-gray-800">Dr. Ratna Pandey</h3>
               <p className="text-blue-600 mb-4">Assistant Warden</p>
-              <p className="text-gray-600">Emily&apos;s creative events bring guests together, creating unforgettable memories and new friendships.</p>
-            </div>
-          </div>
-        </div>
-
-      </section>
-
-      <section id="testimonials" className="py-20 bg-gray-100">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16 text-gray-800">What Our Students Say</h2>
-          <div className="max-w-4xl mx-auto bg-white p-12 rounded-xl shadow-lg relative">
-            <button onClick={prevTestimonial} className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600 transition-colors">
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-            <button onClick={nextTestimonial} className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600 transition-colors">
-              <ChevronRight className="w-6 h-6" />
-            </button>
-            <div className="text-center">
-              <p className="text-2xl mb-8 text-gray-700 italic">&quot;{testimonials[currentTestimonial].text}&quot;</p>
-              <p className="font-semibold text-xl text-gray-800">{testimonials[currentTestimonial].name}</p>
-              <div className="flex justify-center mt-4">
-                <Star className="w-6 h-6 text-yellow-500 fill-current" />
-                <Star className="w-6 h-6 text-yellow-500 fill-current" />
-                <Star className="w-6 h-6 text-yellow-500 fill-current" />
-                <Star className="w-6 h-6 text-yellow-500 fill-current" />
-                <Star className="w-6 h-6 text-yellow-500 fill-current" />
-              </div>
             </div>
           </div>
         </div>
       </section>
+
+      <Testimonials />
 
       <section id="contact" className="py-20 bg-white">
         <div className="container mx-auto px-4">

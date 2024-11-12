@@ -24,11 +24,11 @@ const GalleryHome = () => {
 
   return (
     <div className="flex flex-col items-center gap-8">
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 justify-items-center items-center gap-8 relative">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 justify-items-center items-center gap-8 p-2 relative">
         {allImages.slice(0, visibleImages).map((image) => (
           <div
             key={image.id}
-            className="rounded-xl overflow-hidden sm:w-[250px] sm:h-[200px] w-[200px] h-[150px] relative"
+            className="rounded-xl overflow-hidden sm:w-[250px] sm:h-[200px] w-[175px] h-[150px] relative"
           >
             <Image
               src={image.src}

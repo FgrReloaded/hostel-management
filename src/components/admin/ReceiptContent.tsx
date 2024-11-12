@@ -13,7 +13,7 @@ export default function ReceiptContent({ payment }: { payment: PaymentHistoryPro
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold">Hostel Payment Receipt</h2>
+        <h2 className="text-2xl font-bold text-center">100 Capacity Girls Hostel <br /> Payment Receipt</h2>
         <p className="text-gray-600">Receipt #{parseInt(String(payment.id))}</p>
       </div>
       <div className="grid grid-cols-2 gap-4 mb-8">

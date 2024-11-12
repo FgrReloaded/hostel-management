@@ -115,8 +115,8 @@ export default function HostelLandingPage() {
           <h2 className="text-4xl font-bold text-center mb-16">Our Impact</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
             <div className="bg-blue-500 p-8 rounded-xl transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
-              <p className="text-6xl font-bold mb-4">10,000+</p>
-              <p className="text-2xl">Happy Guests</p>
+              <p className="text-6xl font-bold mb-4">320+</p>
+              <p className="text-2xl">Happy Residents</p>
             </div>
             <div className="bg-blue-500 p-8 rounded-xl transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
               <p className="text-6xl font-bold mb-4">50+</p>
@@ -150,8 +150,8 @@ export default function HostelLandingPage() {
               <h3 className="text-2xl font-semibold mb-2 text-gray-800">Prof. Archana Singh</h3>
               <p className="text-blue-600 mb-4">Warden</p>
             </div>
-            <div className="text-center order-1 md:order-2 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 p-6 rounded-xl">
-              <Image width={200} height={200} objectFit='cover' src="/admins/vcmam.jpeg" alt="Staff member" className="rounded-full mx-auto mb-6 border-4 border-blue-500" />
+            <div className="text-center order-1 md:order-2 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 p-6 md:mb-32 rounded-xl">
+              <Image width={250} height={250} objectFit='cover' src="/admins/vcmam.jpeg" alt="Staff member" className="rounded-full mx-auto mb-6 border-4 border-blue-500" />
               <h3 className="text-2xl font-semibold mb-2 text-gray-800">Prof. Anshu Rani</h3>
               <p className="text-blue-600 mb-4">Vice Chancellor, Dr. Bhimrao Ambedkar University ,Agra</p>
             </div>

@@ -105,7 +105,7 @@ const Features = () => {
             return (
               <div
                 key={index}
-                className={`${feature.bgColor} w-1/5 p-4 rounded-xl text-center transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2`}
+                className={`${feature.bgColor} md:w-1/5 w-44 p-4 rounded-xl text-center transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2`}
               >
                 <Icon className={`w-12 h-12 mx-auto mb-3 ${feature.iconColor}`} />
                 <h3 className="text-lg font-semibold mb-2 text-gray-800">

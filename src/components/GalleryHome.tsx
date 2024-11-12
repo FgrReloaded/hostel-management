@@ -28,7 +28,7 @@ const GalleryHome = () => {
         {allImages.slice(0, visibleImages).map((image) => (
           <div
             key={image.id}
-            className="rounded-xl overflow-hidden w-[250px] h-[200px] relative"
+            className="rounded-xl overflow-hidden sm:w-[250px] sm:h-[200px] w-[200px] h-[150px] relative"
           >
             <Image
               src={image.src}

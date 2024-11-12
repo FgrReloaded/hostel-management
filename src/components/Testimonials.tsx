@@ -53,7 +53,7 @@ const Testimonials = () => {
                 <Image width={100} height={100} objectFit='cover' src={testimonials[currentTestimonial].img} alt={testimonials[currentTestimonial].name} />
               </div>
             }
-            <p className="text-2xl mb-8 text-gray-700 italic">&quot;{testimonials[currentTestimonial].text}&quot;</p>
+            <p className="md:text-2xl text-lg mb-8 text-gray-700 italic">&quot;{testimonials[currentTestimonial].text}&quot;</p>
             <p className="font-semibold text-xl text-gray-800">{testimonials[currentTestimonial].name}</p>
           </div>
         </div>

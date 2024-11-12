@@ -256,14 +256,14 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
         </AlertDialogContent>
       </AlertDialog>
 
-      <Dialog open={isReceiptShow} onOpenChange={()=>setIsReceiptShow(false)}>
+      <Dialog open={isReceiptShow} onOpenChange={() => setIsReceiptShow(false)}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Payment Receipt</DialogTitle>
           </DialogHeader>
           {
             selectedPayment &&
-             <ReceiptContent payment={selectedPayment} />
+            <ReceiptContent payment={selectedPayment} />
           }
           <div className="flex justify-end space-x-2 mt-4">
             <Button onClick={handlePrint}>

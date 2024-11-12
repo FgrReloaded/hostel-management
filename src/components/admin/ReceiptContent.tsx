@@ -7,7 +7,7 @@ interface PaymentHistoryProps extends Payment {
   }
 }
 
-export default function ReceiptContent({ payment }: {payment: PaymentHistoryProps}) {
+export default function ReceiptContent({ payment }: { payment: PaymentHistoryProps }) {
   console.log(payment);
 
   return (
@@ -23,7 +23,7 @@ export default function ReceiptContent({ payment }: {payment: PaymentHistoryProp
         </div>
         <div className="text-right">
           <h3 className="font-semibold">Payment Details:</h3>
-          <p>Amount: ${payment.amount}</p>
+          <p>Amount: ₹{payment.amount}</p>
           <p>Date: {new Date(payment.createdAt).toDateString()}</p>
           <p>Status: {payment.status}</p>
         </div>

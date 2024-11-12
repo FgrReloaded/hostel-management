@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { UserPlus, Home, Users, FileText, Settings, MessageSquare, Pencil, IndianRupee } from "lucide-react"
+import { UserPlus, Home, Users, FileText, Settings, MessageSquare, Pencil, IndianRupee, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { motion } from "framer-motion"
@@ -370,7 +370,10 @@ export default function OwnerDashboard() {
         className="w-64 bg-white shadow-lg"
       >
         <div className="p-6">
-          <h2 className="text-2xl text-center font-bold mb-6 text-indigo-700">Savitribai Phule Bhawan</h2>
+          <div className="text-right absolute right-2 top-2 w-fit mb-2 rounded-full bg-gray-200 p-2">
+            <X className="h-4 w-4 cursor-pointer" onClick={() => router.push("/")} />
+          </div>
+          <h2 className="text-2xl text-center font-bold mb-6 mt-4 text-indigo-700">Savitribai Phule Bhawan</h2>
           <nav className="space-y-2">
             {[
               { icon: Home, label: "Overview", view: "overview" },

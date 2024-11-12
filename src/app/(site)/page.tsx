@@ -67,15 +67,25 @@ export default function HostelLandingPage() {
           </button>
         </div>
         {isMenuOpen && (
-          <div className="md:hidden bg-white shadow-md">
+          <div className="md:hidden shadow-md">
             <nav className="flex flex-col space-y-4 p-4">
-              <a href="#features" className="text-gray-600 hover:text-blue-600 transition-colors" onClick={() => setIsMenuOpen(false)}>Features</a>
-              <a href="#gallery" className="text-gray-600 hover:text-blue-600 transition-colors" onClick={() => setIsMenuOpen(false)}>Gallery</a>
-              <a href="#testimonials" className="text-gray-600 hover:text-blue-600 transition-colors" onClick={() => setIsMenuOpen(false)}>Testimonials</a>
-              <a href="#contact" className="text-gray-600 hover:text-blue-600 transition-colors" onClick={() => setIsMenuOpen(false)}>Contact</a>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors">
-                Book Now
-              </Button>
+              {
+                session ?
+                  <Link href={session.user?.role === "ADMIN" ? "/hostel/admin" : "/hostel"} className="block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors">
+                    <span>
+                      Dashboard
+                    </span>
+                  </Link>
+                  :
+                  <div className='flex gap-2'>
+                    <Link href={"/login/admin"} className="block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors">
+                      Staff Login
+                    </Link>
+                    <Link href={"/auth/login"} className="block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors">
+                      Student Login
+                    </Link>
+                  </div>
+              }
             </nav>
           </div>
         )}
@@ -134,18 +144,18 @@ export default function HostelLandingPage() {
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-16 text-gray-800">Hostel Administration</h2>
-          <div className="flex justify-center items-center gap-12">
-            <div className="text-center transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 p-6 rounded-xl">
+          <div className="flex justify-center items-center flex-wrap gap-12">
+            <div className="text-center order-2 md:order-1 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 p-6 rounded-xl">
               <Image width={200} height={200} objectFit='cover' src="/admins/warden.jpeg" alt="Staff member" className="rounded-full mx-auto mb-6 border-4 border-blue-500" />
               <h3 className="text-2xl font-semibold mb-2 text-gray-800">Prof. Archana Singh</h3>
               <p className="text-blue-600 mb-4">Warden</p>
             </div>
-            <div className="text-center transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 p-6 rounded-xl">
+            <div className="text-center order-1 md:order-2 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 p-6 rounded-xl">
               <Image width={200} height={200} objectFit='cover' src="/admins/vcmam.jpeg" alt="Staff member" className="rounded-full mx-auto mb-6 border-4 border-blue-500" />
               <h3 className="text-2xl font-semibold mb-2 text-gray-800">Prof. Anshu Rani</h3>
               <p className="text-blue-600 mb-4">Vice Chancellor, Dr. Bhimrao Ambedkar University ,Agra</p>
             </div>
-            <div className="text-center transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 p-6 rounded-xl">
+            <div className="text-center order-3 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 p-6 rounded-xl">
               <Image width={200} height={200} objectFit='cover' src="/admins/assistwarden.png" alt="Staff member" className="rounded-full mx-auto mb-6 border-4 border-blue-500" />
               <h3 className="text-2xl font-semibold mb-2 text-gray-800">Dr. Ratna Pandey</h3>
               <p className="text-blue-600 mb-4">Assistant Warden</p>
@@ -181,7 +191,7 @@ export default function HostelLandingPage() {
 
       <footer className="bg-gray-800 text-white py-12">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between px-16">
+          <div className="flex justify-between md:flex-row flex-col gap-16 px-16">
             <div>
               <h3 className="text-2xl font-bold mb-4">Savitribai Phule Bhawan</h3>
               <p className="mb-4">Your home away from home, where adventures begin and memories are made.</p>

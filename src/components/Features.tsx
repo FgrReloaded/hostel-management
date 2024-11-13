@@ -97,7 +97,7 @@ const Features = () => {
     <section id="features" className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-16 text-gray-800">
-          Hostel Facilities
+          100 Capacity Girls Hostel Facilities
         </h2>
         <div className="flex items-center justify-center flex-wrap gap-8">
           {features.map((feature, index) => {
@@ -115,7 +115,8 @@ const Features = () => {
                   {feature.description}
                 </p>
               </div>
-            )}
+            )
+          }
           )}
         </div>
       </div>

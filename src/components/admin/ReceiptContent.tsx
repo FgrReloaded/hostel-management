@@ -8,7 +8,6 @@ interface PaymentHistoryProps extends Payment {
 }
 
 export default function ReceiptContent({ payment }: { payment: PaymentHistoryProps }) {
-  console.log(payment);
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg">
@@ -30,7 +29,7 @@ export default function ReceiptContent({ payment }: { payment: PaymentHistoryPro
       </div>
       <div className="border-t pt-4">
         <p className="text-center text-sm text-gray-600">
-          Thank you for your payment. This is an official receipt for your records.
+          Thank you for your payment. This is an digital receipt for your records.
         </p>
       </div>
     </div>

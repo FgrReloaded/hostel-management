@@ -3,6 +3,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Pencil } from "lucide-react"
 import { Button } from "../ui/button"
 import { Payment, Student } from "@prisma/client";
+import { resetAmountToPay } from "@/actions/admin/student";
+import { toast } from "sonner";
 
 interface StudentWithPayments extends Student {
   status: string;
@@ -24,6 +26,16 @@ const StudentDetails = ({
   showPaymentHistory: () => void,
   setIsFeesPaid: (value: boolean) => void
 }) => {
+
+  const resetAmount = async () => {
+    const { error, msg } = await resetAmountToPay(selectedStudent.id);
+    if (error) {
+      return;
+    }
+    toast.success(msg);
+    selectedStudent.amountToPay = 3500;
+  }
+
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
@@ -83,9 +95,18 @@ const StudentDetails = ({
           <div>
             <p className="font-semibold text-indigo-700">Fees to be paid</p>
             <p className="flex gap-2 items-center">₹ {selectedStudent.amountToPay}
-              <span>
-                <Pencil onClick={() => { setIsFeeAmountDialogOpen(true) }} className="h-4 w-4 text-gray-500 ml-2 cursor-pointer" />
-              </span>
+              {
+                selectedStudent.amountToPay !== 3500 && selectedStudent.status !== "Paid" &&
+                <span onClick={resetAmount} className="cursor-pointer text-[0.65rem] text-gray-700 bg-gray-200 rounded-lg border border-gray-100 py-1 px-2">
+                  Reset
+                </span>
+              }
+              {
+                selectedStudent.status !== "Paid" &&
+                <span>
+                  <Pencil onClick={() => { setIsFeeAmountDialogOpen(true) }} className="h-4 w-4 text-gray-500 ml-2 cursor-pointer" />
+                </span>
+              }
             </p>
           </div>
         </div>

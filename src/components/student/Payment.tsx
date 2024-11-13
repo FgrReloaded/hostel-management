@@ -16,6 +16,7 @@ import { createNewPayment } from '@/actions/payments/payment';
 import { toast } from 'sonner';
 import { Input } from '../ui/input';
 import { Student } from '@prisma/client';
+import qrImage from "../../images/qr.png"
 
 
 const Payment = ({ studentInfo }: { studentInfo: Student }) => {
@@ -28,14 +29,14 @@ const Payment = ({ studentInfo }: { studentInfo: Student }) => {
 
   const paymentDetails = {
     upi: {
-      id: "example@upi",
-      name: "John Doe"
+      id: "9105969848@indianbk",
+      name: "SAMAJ KALYAN GIRLS HOSTEL 100 CAPACITY"
     },
-    qr: "QR code will be displayed here",
+    qr: qrImage,
     netBanking: {
-      accountNumber: "1234567890",
-      ifscCode: "ABCD0001234",
-      accountName: "John Doe"
+      accountNumber: "N/A",
+      ifscCode: "N/A",
+      accountName: "N/A"
     }
   };
 
@@ -113,7 +114,7 @@ const Payment = ({ studentInfo }: { studentInfo: Student }) => {
                 </>
               )}
               {paymentMethod === 'qr' && (
-                <p>{paymentDetails.qr}</p>
+                <Image  src={paymentDetails.qr} width={250} height={250} alt="qr" />
               )}
               {paymentMethod === 'netBanking' && (
                 <>

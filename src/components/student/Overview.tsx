@@ -137,7 +137,7 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
               </Button>
             </CardContent>
           </Card>
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle className="text-xl">Recent Notifications</CardTitle>
             </CardHeader>
@@ -153,7 +153,7 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
                 </li>
               </ul>
             </CardContent>
-          </Card>
+          </Card> */}
         </>
       }
 

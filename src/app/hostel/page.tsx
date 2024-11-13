@@ -1,8 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { CreditCard, FileText, Home, MessageSquare, Settings, User } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import {
@@ -11,7 +10,6 @@ import {
   AlertTitle,
 } from "@/components/ui/alert"
 
-import { cn } from "@/lib/utils"
 import Overview from "@/components/student/Overview"
 import Payment from "@/components/student/Payment"
 import History from "@/components/student/History"
@@ -22,13 +20,11 @@ import { Complaint, Payment as PaymentType, RegistrationRequest } from "@prisma/
 import { toast } from "sonner"
 import { getRegistrationStatus } from "@/actions/student/registration"
 import { getPayments } from "@/actions/payments/payment"
-import { signOut } from "next-auth/react"
-import { ExitIcon } from "@radix-ui/react-icons"
 import OverViewSkeleton from "@/components/student/Skeleton/OverViewSkeleton"
 import { getComplaints } from "@/actions/student/complaints"
+import Sidebar from "@/components/student/Sidebar"
 
 export default function StudentDashboard() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const [activeView, setActiveView] = useState("overview")
   const [registrationStatus, setRegistrationStatus] = useState<RegistrationRequest | null>(null);
@@ -89,10 +85,6 @@ export default function StudentDashboard() {
     )();
   }, [searchParams])
 
-  const handleViewChange = (view: string) => {
-    setActiveView(view)
-    router.push(`?view=${view}`, undefined)
-  }
 
   const renderView = () => {
     if (isLoading || !studentInfo) {
@@ -101,7 +93,7 @@ export default function StudentDashboard() {
     switch (activeView) {
       case "overview":
         return (
-          <Overview studentInfo={studentInfo} setActiveView={handleViewChange} registrationStatus={registrationStatus} paymentHistory={paymentHistory} />
+          <Overview studentInfo={studentInfo} setActiveView={setActiveView} registrationStatus={registrationStatus} paymentHistory={paymentHistory} />
         )
       case "payment":
         return (
@@ -126,83 +118,8 @@ export default function StudentDashboard() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      <motion.div
-        initial={{ x: -300 }}
-        animate={{ x: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-64 bg-white shadow-lg"
-      >
-        <div className="p-6">
-          <h2 className="text-2xl text-center uppercase text-center font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-tr from-purple-800 via-violet-600 to-indigo-800">Savitribai Phule Bhawan</h2>
-          <nav className="space-y-3">
-            <Button
-              variant={activeView === "overview" ? "default" : "ghost"}
-              className={cn("w-full justify-start text-base font-medium py-6 px-4", activeView === "overview" && "bg-blue-100 text-blue-800 hover:bg-blue-200")}
-              onClick={() => handleViewChange("overview")}
-            >
-              <Home className="mr-2 h-5 w-5" />
-              Overview
-            </Button>
-            {
-              (studentInfo?.isRegistered || registrationStatus) &&
-              <Button
-                variant={activeView === "payment" ? "default" : "ghost"}
-                className={cn("w-full justify-start text-base font-medium py-6 px-4", activeView === "payment" && "bg-blue-100 text-blue-800 hover:bg-blue-200")}
-                onClick={() => handleViewChange("payment")}
-              >
-                <CreditCard className="mr-2 h-5 w-5" />
-                Make Payment
-              </Button>
-            }
-            {
-              paymentHistory &&
-              <Button
-                variant={activeView === "history" ? "default" : "ghost"}
-                className={cn("w-full justify-start text-base font-medium py-6 px-4", activeView === "history" && "bg-blue-100 text-blue-800 hover:bg-blue-200")}
-                onClick={() => handleViewChange("history")}
-              >
-                <FileText className="mr-2 h-5 w-5" />
-                Payment History
-              </Button>
-            }
-            <Button
-              variant={activeView === "profile" ? "default" : "ghost"}
-              className={cn("w-full justify-start text-base font-medium py-6 px-4", activeView === "profile" && "bg-blue-100 text-blue-800 hover:bg-blue-200")}
-              onClick={() => handleViewChange("profile")}
-            >
-              <User className="mr-2 h-5 w-5" />
-              Profile
-            </Button>
-            {
-              studentInfo?.isRegistered &&
-              <>
-                <Button
-                  variant={activeView === "complaints" ? "default" : "ghost"}
-                  className={cn("w-full justify-start text-base font-medium py-6 px-4", activeView === "complaints" && "bg-blue-100 text-blue-800 hover:bg-blue-200")}
-                  onClick={() => handleViewChange("complaints")}
-                >
-                  <MessageSquare className="mr-2 h-5 w-5" />
-                  File Complaint
-                </Button>
-                <Button
-                  variant="ghost"
-                  className={cn("w-full justify-start text-base font-medium py-6 px-4", activeView === "settings" && "bg-blue-100 text-blue-800 hover:bg-blue-200")}
-                >
-                  <Settings className="mr-2 h-5 w-5" />
-                  Settings
-                </Button>
-              </>
-            }
-            <Button className="w-full justify-start text-base font-medium py-6 px-4" onClick={() => signOut({
-              redirectTo: "/"
-            })}>
-              Logout <ExitIcon className="ml-2 h-4 w-4" />
-            </Button>
-          </nav>
-        </div>
-      </motion.div>
-
-      <div className="flex-1 p-8 overflow-auto">
+      <Sidebar setActiveView={setActiveView} activeView={activeView} studentInfo={studentInfo} registrationStatus={registrationStatus} paymentHistory={paymentHistory} />
+      <div className="flex-1 md:px-8 px-4 py-16 overflow-auto">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -218,13 +135,12 @@ export default function StudentDashboard() {
                 <span>
                   Your profile is incomplete, please complete your profile to continue
                 </span>
-                <Button onClick={() => handleViewChange("profile")} variant="default" className="ml-4">
+                <Button onClick={() => setActiveView("profile")} variant="default" className="ml-4">
                   Complete Profile
                 </Button>
               </AlertDescription>
             </Alert>
           }
-
           {renderView()}
         </motion.div>
       </div>

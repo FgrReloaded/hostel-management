@@ -1,4 +1,4 @@
-import {ModeType} from "@prisma/client";
+import {ModeType, Payment} from "@prisma/client";
 
 export interface PaymentMode {
   type: ModeType;
@@ -8,4 +8,11 @@ export interface PaymentMode {
   ifsc?: string;
   qrcode?: string;
   bankName?: string;
+}
+
+export interface PaymentHistoryProps extends Payment {
+  student: {
+    name: string;
+    id: string;
+  }
 }

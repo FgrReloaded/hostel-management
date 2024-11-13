@@ -1,11 +1,8 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { UserPlus, Home, Users, FileText, Settings, MessageSquare, IndianRupee, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
-import { signOut } from "next-auth/react"
-import { ExitIcon } from "@radix-ui/react-icons"
 import Student from "@/components/admin/Student"
 import Reports from "@/components/admin/Reports"
 import PaymentHistory from "@/components/admin/PaymentHistory"
@@ -31,13 +28,9 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Input } from "@/components/ui/input"
 import StudentDetails from "@/components/admin/StudentDetails"
+import { PaymentHistoryProps } from "@/lib/types"
+import Sidebar from "@/components/admin/Sidebar"
 
-interface PaymentHistoryProps extends PaymentType {
-  student: {
-    name: string;
-    id: string;
-  }
-}
 
 interface StudentWithPayments extends StudentType {
   status: string;
@@ -114,10 +107,7 @@ export default function OwnerDashboard() {
 
   }, [searchParams])
 
-  const handleViewChange = (view: string) => {
-    setActiveView(view)
-    router.push(`?view=${view}`, undefined)
-  }
+
 
   useEffect(() => {
     (async () => {
@@ -326,63 +316,9 @@ export default function OwnerDashboard() {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-indigo-100 to-purple-100">
-      <motion.div
-        initial={{ x: -300 }}
-        animate={{ x: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-64 bg-white shadow-lg"
-      >
-        <div className="p-6">
-          <div className="md:hidden text-right absolute right-2 top-2 w-fit mb-2 rounded-full bg-gray-200 p-2">
-            <X className="h-4 w-4 cursor-pointer" onClick={() => router.push("/")} />
-          </div>
-          <h2 className="text-2xl text-center font-bold mb-6 mt-4 text-indigo-700">Savitribai Phule Bhawan</h2>
-          <nav className="space-y-2">
-            {[
-              { icon: Home, label: "Overview", view: "overview" },
-              { icon: Users, label: "Students", view: "students" },
-              { icon: FileText, label: "Reports", view: "reports" },
-              { icon: IndianRupee, label: "Payment History", view: "history" },
-              { icon: UserPlus, label: "Request", view: "request" },
-              { icon: MessageSquare, label: "Complaints", view: "complaints" },
-              { icon: Settings, label: "Settings", view: "settings" },
-            ].map(({ icon: Icon, label, view }) => (
-              <Button
-                key={view}
-                variant={activeView === view ? "default" : "ghost"}
-                className={`w-full justify-start ${activeView === view ? 'bg-indigo-100 hover:bg-indigo-200 text-indigo-700' : ''}`}
-                onClick={() => handleViewChange(view)}
-              >
-                <Icon className="mr-2 h-4 w-4" />
-                {label} {view === "history" && paymentHistory.filter(p => p.status === "Pending").length > 0 &&
-                  (
-                    <span className="bg-red-500 text-white rounded-full px-2 p-1 font-extrabold text-xs ml-2">
-                      {paymentHistory.filter(p => p.status === "Pending").length}
-                    </span>
-                  )
-                }
-                {
-                  view === "request" && countRegistrationRequest > 0 &&
-                  (
-                    <span className="bg-red-500 text-white rounded-full px-2 p-1 font-extrabold text-xs ml-2">
-                      {countRegistrationRequest}
-                    </span>
-                  )
-                }
-              </Button>
-            ))}
-            <Button variant="ghost" className="w-full justify-start text-red-500" onClick={() => {
-              signOut({
-                redirectTo: "/"
-              })
-            }}>
-              Logout <ExitIcon className="ml-2 h-4 w-4" />
-            </Button>
-          </nav>
-        </div>
-      </motion.div>
+      <Sidebar activeView={activeView} setActiveView={setActiveView} paymentHistory={paymentHistory} countRegistrationRequest={countRegistrationRequest} />
 
-      <div className="flex-1 p-8 overflow-auto">
+      <div className="flex-1 md:p-8 px-4 py-12 overflow-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -419,7 +355,7 @@ export default function OwnerDashboard() {
                 Please enter the day student was present in the hostel
               </p>
               <div className="mt-4">
-                <Input onChange={(e) => { setDayPresent(parseInt(e.target.value)) }} value={dayPresent ?? 0} placeholder="No of days present" type='number' />
+                <Input max={10} onChange={(e) => { setDayPresent(parseInt(e.target.value)) }} value={dayPresent ?? 0} placeholder="No of days present" type='number' />
               </div>
               <div className="flex justify-end mt-4">
                 <AlertDialogCancel onClick={() => setIsFeeAmountDialogOpen(false)} className="mr-2">Cancel</AlertDialogCancel>

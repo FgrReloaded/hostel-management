@@ -139,3 +139,38 @@ export async function updateFees(id: string, amount: GLfloat): Promise<{ error: 
     return { error: true, msg: "Something went wrong, please try again!" };
   }
 }
+
+
+export async function resetAmountToPay(id: string) {
+  try {
+    const session = await auth();
+
+    if (!session || session?.user?.role !== "ADMIN") {
+      return { error: true, msg: "Unauthorized" };
+    }
+
+    const student = await prisma.student.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!student) {
+      return { error: true, msg: "Student not found" };
+    }
+
+    await prisma.student.update({
+      where: {
+        id: id,
+      },
+      data: {
+        amountToPay: 3500,
+      },
+    });
+
+    return { error: false, msg: "Amount reset successfully" };
+  } catch (error) {
+    console.error(error);
+    return { error: true, msg: "Something went wrong, please try again!" };
+  }
+}

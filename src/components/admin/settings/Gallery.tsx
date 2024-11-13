@@ -4,9 +4,11 @@ import { Trash2, Plus, RefreshCcw } from 'lucide-react'
 import { CldImage, CldUploadWidget } from "next-cloudinary"
 import { useEffect, useState } from "react"
 import { GalleryImage } from "@/lib/types"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function GalleryManager() {
-  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([])
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // @ts-expect-error-ignore
   const handleSuccess = async (result) => {
@@ -22,7 +24,9 @@ export default function GalleryManager() {
 
   useEffect(() => {
     (async () => {
+      setIsLoading(true);
       const { error, images } = await getAllImages();
+      setIsLoading(false);
       if (error) return;
       if (images) {
         setGalleryImages(images)
@@ -40,7 +44,9 @@ export default function GalleryManager() {
   }
 
   const refresh = async () => {
+    setIsLoading(true);
     const { error, images } = await getAllImages();
+    setIsLoading(false);
     if (error) return;
     if (images) {
       setGalleryImages(images)
@@ -73,6 +79,11 @@ export default function GalleryManager() {
 
       <div className=" grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4
        gap-4 bg-white p-4 rounded-xl">
+        {isLoading && (<>
+          <Skeleton className="rounded-xl" />
+          <Skeleton className="rounded-xl" />
+        </>
+        )}
         {
           galleryImages.length === 0 && (
             <div className="text-lg font-semibold text-gray-500">No images found</div>

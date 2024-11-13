@@ -3,10 +3,12 @@ import { Button } from '@/components/ui/button'
 import { getAllImages } from '@/actions/admin/gallery';
 import { GalleryImage } from '@/lib/types';
 import { CldImage } from 'next-cloudinary';
+import { Skeleton } from './ui/skeleton';
 
 
 const GalleryHome = () => {
-  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([])
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [visibleImages, setVisibleImages] = useState<number>(10);
   const imagesPerLoad = 10;
@@ -17,7 +19,9 @@ const GalleryHome = () => {
 
   useEffect(() => {
     (async () => {
+      setIsLoading(true);
       const { error, images } = await getAllImages();
+      setIsLoading(false);
       if (error) return;
       if (images) {
         setGalleryImages(images)
@@ -29,6 +33,17 @@ const GalleryHome = () => {
   return (
     <div className="flex flex-col items-center gap-8">
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 justify-items-center items-center gap-8 p-2 relative">
+        {
+          isLoading &&
+          <>
+            <Skeleton className="rounded-xl" />
+            <Skeleton className="rounded-xl" />
+            <Skeleton className="rounded-xl" />
+            <Skeleton className="rounded-xl" />
+            <Skeleton className="rounded-xl" />
+            <Skeleton className="rounded-xl" />
+          </>
+        }
         {galleryImages.slice(0, visibleImages).map((image) => (
           <div
             key={image.id}

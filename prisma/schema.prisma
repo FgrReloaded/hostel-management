@@ -147,6 +147,12 @@ model PaymentMethod {
   updatedAt   DateTime @updatedAt
 }
 
+model GalleryImage {
+  id          BigInt  @id @default(autoincrement())
+  publicUrl  String
+  secureUrl   String
+  createdAt   DateTime @default(now())
+}
 
 enum RequestStatus {
   PENDING

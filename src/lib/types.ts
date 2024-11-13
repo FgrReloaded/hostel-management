@@ -16,3 +16,10 @@ export interface PaymentHistoryProps extends Payment {
     id: string;
   }
 }
+
+export interface GalleryImage {
+  id: bigint;
+  publicUrl: string;
+  secureUrl: string;
+  createdAt: Date;
+}

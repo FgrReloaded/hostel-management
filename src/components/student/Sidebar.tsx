@@ -6,7 +6,7 @@ import { ExitIcon } from '@radix-ui/react-icons'
 import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Payment, RegistrationRequest, Student } from '@prisma/client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const Sidebar = ({
   activeView,
@@ -21,23 +21,42 @@ const Sidebar = ({
   registrationStatus: RegistrationRequest | null,
   paymentHistory: Payment[],
 }) => {
-
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const checkMobile = () => {
+      setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleViewChange = (view: string) => {
     setActiveView(view)
     router.push(`?view=${view}`, undefined);
     setIsOpen(false);
   }
+
+  // Don't render until after mount
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <div>
-      <div className="md:hidden  fixed top-2 left-2 z-30 p-2 bg-white rounded-full">
+      <div className="md:hidden fixed top-2 left-2 z-30 p-2 bg-white rounded-full">
         <Menu className="h-5 w-5 cursor-pointer text-indigo-700" onClick={() => setIsOpen(true)} />
       </div>
       <motion.div
         initial={{ x: -300 }}
-        animate={{ x: isOpen || !window.matchMedia("(max-width: 768px)").matches ? 0 : -300 }}
+        animate={{ x: isOpen || !isMobile ? 0 : -300 }}
         transition={{ duration: 0.5 }}
         className={`fixed md:relative w-64 h-screen bg-white shadow-lg z-40 ${isOpen ? "block" : "hidden md:block"}`}
       >
@@ -107,7 +126,7 @@ const Sidebar = ({
           </nav>
         </div>
       </motion.div>
-      
+
       {isOpen && <div className="fixed inset-0 bg-black opacity-50 z-30 md:hidden" onClick={() => setIsOpen(false)}></div>}
     </div>
   )

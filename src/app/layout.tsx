@@ -3,7 +3,7 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/sonner";
 import { Suspense } from "react";
-import {Lato} from "next/font/google";
+import { Lato } from "next/font/google";
 
 const lato = Lato({
   subsets: ["latin"],
@@ -25,7 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body style={lato.style}>
         <SessionProvider>
-          <Suspense fallback={<span className="loader"></span>}>
+          <Suspense fallback={<div className="h-screen w-screen flex items-center justify-center"><span className="loader"></span></div>}>
             {children}
           </Suspense>
           <Toaster />

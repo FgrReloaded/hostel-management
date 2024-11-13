@@ -1,8 +1,7 @@
 'use client'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import PaymentMethod from "./settings/PaymentMethodSettings"
-
+import GalleryManager from "./settings/Gallery"
 
 
 type SettingsCategory = {
@@ -16,12 +15,12 @@ export default function SettingsPage() {
 
 
   const settingsCategories: SettingsCategory[] = [
-    { id: 'payment-methods', name: 'Payment Methods', component: <PaymentMethod /> },
+    { id: 'gallery', name: 'Gallery', component: <GalleryManager /> },
   ]
 
   return (
     <div className="container mx-auto py-10">
-      <Tabs defaultValue="payment-methods" className="space-y-4">
+      <Tabs defaultValue="gallery" className="space-y-4">
         <TabsList>
           {settingsCategories.map(category => (
             <TabsTrigger key={category.id} value={category.id}>

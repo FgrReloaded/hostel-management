@@ -55,7 +55,7 @@ const Stats = ({ students, studentsPaid, revenueTrend, overview }: {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 w-fit">
-        <Card className="bg-white md:w-4/5 w-3/4">
+        <Card className="bg-white w-full">
           <CardHeader>
             <CardTitle>Revenue Trend</CardTitle>
           </CardHeader>
@@ -67,7 +67,7 @@ const Stats = ({ students, studentsPaid, revenueTrend, overview }: {
                   color: "hsl(var(--chart-1))",
                 },
               }}
-              className="h-[300px] md:w-4/5 w-3/4 "
+              className="h-[300px] w-4/5"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={revenueTrend}>

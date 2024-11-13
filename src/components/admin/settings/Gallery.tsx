@@ -1,6 +1,6 @@
 import { createNewImage, deleteImage, getAllImages } from "@/actions/admin/gallery"
 import { Button } from "@/components/ui/button"
-import { Trash2, Plus } from 'lucide-react'
+import { Trash2, Plus, RefreshCcw } from 'lucide-react'
 import { CldImage, CldUploadWidget } from "next-cloudinary"
 import { useEffect, useState } from "react"
 import { GalleryImage } from "@/lib/types"
@@ -39,10 +39,22 @@ export default function GalleryManager() {
     setGalleryImages(galleryImages.filter((image) => image.id !== imageId))
   }
 
+  const refresh = async () => {
+    const { error, images } = await getAllImages();
+    if (error) return;
+    if (images) {
+      setGalleryImages(images)
+    }
+  }
 
   return (
-    <div className="container mx-auto p-4 ">
-      <h1 className="text-2xl font-bold mb-4">Gallery Manager</h1>
+    <div className="container mx-auto p-4">
+      <div className="flex gap-2 items-center mb-4">
+        <h1 className="text-2xl font-bold">Gallery Manager</h1>
+        <span className="bg-gray-50 rounded-lg p-2 w-fit hover:bg-gray-100 cursor-pointer" onClick={refresh}>
+          <RefreshCcw className="h-4 w-4" />
+        </span>
+      </div>
 
       <div className="mb-6">
         <h2 className="text-lg font-semibold mb-2">Add New Image</h2>

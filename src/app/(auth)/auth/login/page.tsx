@@ -55,7 +55,7 @@ export default function SignIn() {
     return (
         <Form {...form}>
             <form
-                className="flex md:w-[30%] flex-col gap-y-6 border-1 py-8 md:px-12 px-16 rounded-lg shadow-lg"
+                className="flex md:w-[30%] w-11/12 flex-col gap-y-6 border-1 py-8 md:px-12 sm:px-16 px-8 rounded-lg shadow-lg"
                 onSubmit={form.handleSubmit(onSubmit)}
             >
                 <div className="flex flex-col items-center gap-2">

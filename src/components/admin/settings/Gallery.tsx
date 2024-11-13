@@ -80,12 +80,12 @@ export default function GalleryManager() {
       <div className=" grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4
        gap-4 bg-white p-4 rounded-xl">
         {isLoading && (<>
-          <Skeleton className="rounded-xl" />
-          <Skeleton className="rounded-xl" />
+          <Skeleton className="w-72 h-72 rounded-xl" />
+          <Skeleton className="rounded-xl w-72 h-72" />
         </>
         )}
         {
-          galleryImages.length === 0 && (
+          galleryImages.length === 0 && !isLoading && (
             <div className="text-lg font-semibold text-gray-500">No images found</div>
           )
         }

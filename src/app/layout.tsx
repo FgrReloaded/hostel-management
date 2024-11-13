@@ -12,8 +12,8 @@ const lato = Lato({
 
 
 export const metadata: Metadata = {
-  title: "SBP Bhawan",
-  description: "SBP Bhawan Hostel Management System",
+  title: "SavitriBaiPhule Bhawan",
+  description: "Savitribaiphule Bhawan Hostel Management System",
 };
 
 export default function RootLayout({

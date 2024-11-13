@@ -52,7 +52,7 @@ export default function AdminLogin() {
     return (
         <Form {...form}>
             <form
-                className="flex md:w-[30%] w-4/5 mx-auto mt-[20vh] flex-col gap-y-6 border-1 py-8 md:px-12 px-16 rounded-lg shadow-lg"
+                className="flex md:w-[30%] w-11/12 mx-auto mt-[20vh] flex-col gap-y-6 border-1 py-8 md:px-12 sm:px-16 px-8 rounded-lg shadow-lg"
                 onSubmit={form.handleSubmit(onSubmit)}
             >
                 <div className="flex flex-col items-center gap-2">

@@ -127,7 +127,7 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
       const imgHeight = (canvas.height * imgWidth) / canvas.width
 
       pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight)
-      pdf.save('receipt.pdf')
+      pdf.save(`${selectedPayment?.student.name}-receipt.pdf`)
     }
   }
 
@@ -137,7 +137,7 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
     if (monthFilter !== "all") {
       filteredPayments = filteredPayments.filter(payment => {
         const paymentDate = new Date(payment.createdAt)
-        return paymentDate.getMonth() === parseInt(monthFilter) - 1 // Months are 0-indexed
+        return paymentDate.getMonth() === parseInt(monthFilter) - 1
       })
     }
 

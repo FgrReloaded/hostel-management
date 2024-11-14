@@ -101,7 +101,7 @@ export default function StudentDashboard() {
         )
       case "history":
         return (
-          <History paymentHistory={paymentHistory} studentRegistered={studentInfo?.isRegistered} />
+          <History paymentHistory={paymentHistory}  studentRegistered={studentInfo?.isRegistered} />
         )
       case "profile":
         return (

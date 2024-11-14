@@ -55,7 +55,7 @@ export default function HostelLandingPage() {
               :
               <div className='flex gap-2'>
                 <Link href={"/login/admin"} className="hidden md:block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors">
-                  Staff Login
+                  Admin Login
                 </Link>
                 <Link href={"/auth/login"} className="hidden md:block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors">
                   Student Login
@@ -79,7 +79,7 @@ export default function HostelLandingPage() {
                   :
                   <div className='flex gap-2'>
                     <Link href={"/login/admin"} className="block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors">
-                      Staff Login
+                      Admin Login
                     </Link>
                     <Link href={"/auth/login"} className="block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors">
                       Student Login

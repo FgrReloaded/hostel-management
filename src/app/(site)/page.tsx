@@ -115,15 +115,15 @@ export default function HostelLandingPage() {
           <h2 className="text-4xl font-bold text-center mb-16">Our Impact</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
             <div className="bg-blue-500 p-8 rounded-xl transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
-              <p className="text-6xl font-bold mb-4">320+</p>
+              <p className="text-6xl font-bold mb-4">82</p>
               <p className="text-2xl">Happy Residents</p>
             </div>
             <div className="bg-blue-500 p-8 rounded-xl transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
-              <p className="text-6xl font-bold mb-4">50+</p>
-              <p className="text-2xl">Countries Represented</p>
+              <p className="text-6xl font-bold mb-4">16</p>
+              <p className="text-2xl">City Diversity</p>
             </div>
             <div className="bg-blue-500 p-8 rounded-xl transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
-              <p className="text-6xl font-bold mb-4">25</p>
+              <p className="text-6xl font-bold mb-4">09</p>
               <p className="text-2xl">Dedicated Staff</p>
             </div>
             <div className="bg-blue-500 p-8 rounded-xl transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
@@ -168,19 +168,19 @@ export default function HostelLandingPage() {
 
       <section id="contact" className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16 text-gray-800">Get in Touch</h2>
+          <h2 className="text-4xl font-bold text-center mb-16 text-gray-800">Contact Us</h2>
           <form className="max-w-2xl mx-auto bg-gray-100 p-12 rounded-xl shadow-lg">
             <div className="mb-6">
               <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Your Name</label>
-              <Input id="name" type="text" placeholder="John Doe" className="w-full" />
+              <Input id="name" type="text" placeholder="Your Name" className="w-full" />
             </div>
             <div className="mb-6">
               <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">Your Email</label>
-              <Input id="email" type="email" placeholder="john@example.com" className="w-full" />
+              <Input id="email" type="email" placeholder="Your Email Address" className="w-full" />
             </div>
             <div className="mb-6">
               <label htmlFor="message" className="block text-gray-700 text-sm font-bold mb-2">Your Message</label>
-              <Textarea id="message" placeholder="How can we help you?" className="w-full" rows={6} />
+              <Textarea id="message" placeholder="Enter your message" className="w-full" rows={6} />
             </div>
             <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-colors">
               Send Message

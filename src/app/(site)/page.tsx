@@ -113,14 +113,10 @@ export default function HostelLandingPage() {
       <section className="py-20 bg-blue-600 text-white">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-16">Our Impact</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mx-auto md:w-4/5 w-full  text-center">
             <div className="bg-blue-500 p-8 rounded-xl transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
               <p className="text-6xl font-bold mb-4">82</p>
               <p className="text-2xl">Happy Residents</p>
-            </div>
-            <div className="bg-blue-500 p-8 rounded-xl transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
-              <p className="text-6xl font-bold mb-4">16</p>
-              <p className="text-2xl">City Diversity</p>
             </div>
             <div className="bg-blue-500 p-8 rounded-xl transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
               <p className="text-6xl font-bold mb-4">09</p>

@@ -4,6 +4,8 @@ import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/sonner";
 import { Suspense } from "react";
 import { Lato } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const lato = Lato({
   subsets: ["latin"],
@@ -30,6 +32,8 @@ export default function RootLayout({
           </Suspense>
           <Toaster />
         </SessionProvider>
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );

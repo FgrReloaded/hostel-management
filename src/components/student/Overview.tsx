@@ -70,7 +70,9 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
                   <div className="flex flex-col space-y-2">
                     <span className="text-sm font-medium text-gray-500">Fees Payment Status</span>
                     <Badge variant="default" className="w-fit">
-                      {monthlyPaid ? "Paid" : "To be paid"}
+                      {
+                        monthlyPaid && paymentHistory[0]?.status === "Pending" ? "Pending" : monthlyPaid ? "Paid" : "To be paid"
+                      }
                     </Badge>
                   </div>
                 </> :

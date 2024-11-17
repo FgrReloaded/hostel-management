@@ -48,7 +48,7 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
             <div className="flex flex-col space-y-2">
               <span className="text-sm font-medium text-gray-500">Room Number / Floor</span>
               <span className="text-2xl font-bold">
-                {`${studentInfo?.roomNumber ? (studentInfo?.roomNumber?.split("/")[0] + ' / ' + studentInfo?.roomNumber?.split("/")[1]):""}`}
+                {`${studentInfo?.roomNumber ? (studentInfo?.roomNumber?.split("/")[0] + ' / ' + studentInfo?.roomNumber?.split("/")[1]) : ""}`}
                 {studentInfo?.roomNumber === null && "Not Assigned"}
               </span>
             </div>
@@ -56,7 +56,7 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
               studentInfo?.isRegistered ?
                 <>
                   <div className="flex flex-col space-y-2">
-                    <span className="text-sm font-medium text-gray-500">Monthly Rent</span>
+                    <span className="text-sm font-medium text-gray-500">Monthly Mess Fees</span>
                     ₹ {studentInfo?.amountToPay}
                   </div>
                   <div className="flex flex-col space-y-2">
@@ -68,9 +68,9 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
                     </span>
                   </div>
                   <div className="flex flex-col space-y-2">
-                    <span className="text-sm font-medium text-gray-500">Monthly Fees</span>
+                    <span className="text-sm font-medium text-gray-500">Fees Payment Status</span>
                     <Badge variant="default" className="w-fit">
-                      {monthlyPaid ? "Paid" : "Pending"}
+                      {monthlyPaid ? "Paid" : "To be paid"}
                     </Badge>
                   </div>
                 </> :
@@ -97,7 +97,7 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
                             className="w-fit font-bold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
                           >
                             <IndianRupee className="mr-2 h-5 w-5" />
-                            Make Payment
+                            Make Mess Payment
                           </Button>
                         </div> :
                         <div className="flex items-center gap-2">
@@ -125,7 +125,7 @@ const Overview = ({ studentInfo, setActiveView, registrationStatus, paymentHisto
                 className="w-full bg-gradient-to-tr from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-bold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
               >
                 <IndianRupee className="mr-2 h-5 w-5" />
-                Make Payment
+                Make Mess Payment
               </Button>
               <Button
                 variant="outline"

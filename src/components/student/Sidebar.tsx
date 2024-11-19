@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
 import { motion } from 'framer-motion'
 import { CreditCard, FileText, Home, Menu, MessageSquare, User, X } from 'lucide-react'
-import { ExitIcon } from '@radix-ui/react-icons'
+import { ExitIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons'
 import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Payment, RegistrationRequest, Student } from '@prisma/client'
@@ -122,6 +122,14 @@ const Sidebar = ({
                 </Button>
               </>
             }
+            <Button
+              variant={activeView === "how-to-use" ? "default" : "ghost"}
+              className={cn("w-full justify-start text-base font-medium py-6 px-4", activeView === "how-to-use" && "bg-blue-100 text-blue-800 hover:bg-blue-200")}
+              onClick={() => handleViewChange("how-to-use")}
+            >
+              <QuestionMarkCircledIcon className="mr-2 h-5 w-5" />
+              How to use
+            </Button>
             <Button className="w-full justify-start text-base font-medium py-6 px-4" onClick={() => signOut({
               redirectTo: "/"
             })}>

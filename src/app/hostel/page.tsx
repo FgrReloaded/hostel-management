@@ -111,6 +111,15 @@ export default function StudentDashboard() {
         return (
           <Complaints setComplaints={setComplaints} complaints={complaints} />
         )
+      case "how-to-use":
+        return (
+          <div className="flex flex-col items-center justify-center">
+            <p className="text-gray-600">This is a guide on how to use the student portal</p>
+            <div className="rounded-xl mt-8">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/YEvp0dhQ3Kk?si=bns-VShrwvYIwY7n" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+            </div>
+          </div>
+          )
       default:
         return null
     }

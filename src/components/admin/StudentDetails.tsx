@@ -1,10 +1,20 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Pencil } from "lucide-react"
+import { OctagonAlert, Pencil } from "lucide-react"
 import { Button } from "../ui/button"
 import { Payment, Student } from "@prisma/client";
 import { resetAmountToPay } from "@/actions/admin/student";
 import { toast } from "sonner";
+import { sendReminderEmail } from "@/actions/mail/payment";
+import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+} from '@/components/ui/alert-dialog';
 
 interface StudentWithPayments extends Student {
   status: string;
@@ -26,6 +36,9 @@ const StudentDetails = ({
   showPaymentHistory: () => void,
   setIsFeesPaid: (value: boolean) => void
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [openBlacklist, setOpenBlacklist] = useState(false);
+
 
   const resetAmount = async () => {
     const { error, msg } = await resetAmountToPay(selectedStudent.id);
@@ -36,6 +49,27 @@ const StudentDetails = ({
     selectedStudent.amountToPay = 3500;
   }
 
+  const sendReminder = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error, msg } = await sendReminderEmail(selectedStudent);
+
+      console.log(data, error, msg)
+      if (error) {
+        console.log(error)
+      }
+      toast.success(msg);
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const blackListStudent = async () => {
+    console.log("Blacklisting student")
+  }
+
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
@@ -44,8 +78,17 @@ const StudentDetails = ({
             <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${selectedStudent.name}`} alt={selectedStudent.name} />
             <AvatarFallback>{selectedStudent.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
           </Avatar>
-          <div>
-            <CardTitle className="text-2xl">{selectedStudent.name}</CardTitle>
+          <div className="w-full">
+            <CardTitle className="text-2xl flex gap-4 items-center justify-between w-full mb-2">
+              <span>
+                {selectedStudent.name}
+              </span>
+              <Button
+                onClick={() => setOpenBlacklist(true)}
+              variant="outline" className="text-sm ml-auto border border-red-600 text-red-600 hover:text-red-500 hover:bg-red-100" size={"sm"}>
+                <OctagonAlert /> Remove
+              </Button>
+            </CardTitle>
             <CardDescription className="flex gap-2 items-center">
               Room <span className="font-semibold text-gray-900">{selectedStudent.roomNumber ? selectedStudent?.roomNumber?.split("/")[0] + ' / ' + selectedStudent?.roomNumber?.split("/")[1] : "Not Assigned"}</span>
               {
@@ -111,11 +154,34 @@ const StudentDetails = ({
           </div>
         </div>
         <div className="mt-6 space-y-4">
-          <Button className="w-full bg-indigo-600 hover:bg-indigo-700">Send Payment Reminder</Button>
+          {
+            selectedStudent.status !== "Paid" &&
+            <Button onClick={sendReminder} className="w-full bg-indigo-600 hover:bg-indigo-700">{
+              isLoading ? 'Sending...' : 'Send Payment Reminder'
+            }</Button>
+          }
           <Button onClick={showPaymentHistory} variant="outline" className="w-full">View Payment History</Button>
         </div>
       </CardContent>
-    </Card>)
+      <AlertDialog open={openBlacklist} onOpenChange={setOpenBlacklist}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Blacklist Student</AlertDialogTitle>
+            <AlertDialogDescription>
+              <p>
+                Are you sure you want to blacklist this student
+              </p>
+              <div className="flex justify-end mt-4">
+                <AlertDialogCancel onClick={() => setIsFeesPaid(false)} className="mr-2">Cancel</AlertDialogCancel>
+                <Button onClick={blackListStudent} variant="destructive">Confirm</Button>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+        </AlertDialogContent>
+      </AlertDialog>
+    </Card>
+  )
 }
 
 export default StudentDetails

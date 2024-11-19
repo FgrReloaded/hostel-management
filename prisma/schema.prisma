@@ -31,6 +31,7 @@ model Student {
   role             Role     @default(STUDENT)
   notificationReceipts NotificationReceipt[]
   registrationRequest RegistrationRequest?
+  isRemoved        Boolean  @default(false)
 }
 
 model Parent {

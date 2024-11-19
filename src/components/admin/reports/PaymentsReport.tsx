@@ -103,8 +103,8 @@ export default function PaymentsReport({ revenueTrend, paymentStatus, studentsWi
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-primary/10 rounded-md">
-          <div className="bg-primary/10 p-6 rounded-lg ml-4">
+        <div className="flex justify-center max-md:flex-col gap-8 items-center bg-primary/10 rounded-md">
+          <div className="bg-primary/10 p-6 rounded-lg md:ml-4 max-md:mt-4">
             <h3 className="text-xl font-semibold text-primary mb-2">Revenue for {thisMonth}</h3>
             <p className="text-4xl font-bold text-primary">₹{revenueTrendThisMonth?.toLocaleString('en-IN')}</p>
           </div>

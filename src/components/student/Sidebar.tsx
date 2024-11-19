@@ -7,6 +7,7 @@ import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Payment, RegistrationRequest, Student } from '@prisma/client'
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 const Sidebar = ({
   activeView,
@@ -65,7 +66,10 @@ const Sidebar = ({
         </div>
 
         <div className="p-6">
-          <h2 className="text-2xl text-center uppercase font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-tr from-purple-800 via-violet-600 to-indigo-800">Savitribai Phule Bhawan</h2>
+          <div className="flex flex-col items-center">
+            <Image src="/logo.webp" alt="Logo" width={100} height={100} objectFit="cover" />
+            <h2 className="text-2xl text-center uppercase font-bold mb-6 mt-2 bg-clip-text text-transparent bg-gradient-to-tr from-purple-800 via-violet-600 to-indigo-800">Savitribai Phule Bhawan</h2>
+          </div>
           <nav className="space-y-3">
             <Button
               variant={activeView === "overview" ? "default" : "ghost"}

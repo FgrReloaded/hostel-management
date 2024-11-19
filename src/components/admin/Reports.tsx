@@ -1,18 +1,11 @@
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Bar, BarChart, Line, LineChart, Pie, PieChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
-const monthlyIncome = [
-  { month: "Jan", income: 5000 },
-  { month: "Feb", income: 5500 },
-  { month: "Mar", income: 6000 },
-  { month: "Apr", income: 5800 },
-  { month: "May", income: 6200 },
-  { month: "Jun", income: 6500 },
-]
+import { Payment, Student } from "@prisma/client"
+import PaymentsReport from "@/components/admin/reports/PaymentsReport"
 
 const studentOccupancy = [
   { month: "Jan", occupancy: 85 },
@@ -23,11 +16,6 @@ const studentOccupancy = [
   { month: "Jun", occupancy: 98 },
 ]
 
-const paymentStatus = [
-  { status: "Paid", value: 75 },
-  { status: "Pending", value: 20 },
-  { status: "Overdue", value: 5 },
-]
 
 const expenseBreakdown = [
   { category: "Maintenance", amount: 2000 },
@@ -37,10 +25,28 @@ const expenseBreakdown = [
   { category: "Miscellaneous", amount: 1500 },
 ]
 
-const Reports = () => {
+interface StudentWithPayments extends Student {
+  status: string;
+  amount: number;
+  payments: Payment[];
+}
+
+
+interface ReportsProp {
+  studentsWithStatus: StudentWithPayments[]
+  revenueTrend: { month: string; revenue: number }[]
+}
+
+
+const Reports = ({ studentsWithStatus, revenueTrend }: ReportsProp) => {
   const downloadReport = (reportName: string) => {
     console.log(`Downloading ${reportName} report...`)
   }
+
+  const paymentStatus = [
+    { status: "Paid", value: studentsWithStatus.filter((student) => student.status === "Paid").length },
+    { status: "Unpaid", value: studentsWithStatus.filter((student) => student.status === "Unpaid").length },
+  ]
 
   return (
     <div className="space-y-8">
@@ -69,11 +75,11 @@ const Reports = () => {
                 className="h-[400px]"
               >
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={monthlyIncome}>
+                  <BarChart data={revenueTrend}>
                     <XAxis dataKey="month" />
                     <YAxis />
                     <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="income" fill="hsl(262, 80%, 50%)" />
+                    <Bar dataKey="revenue" fill="hsl(262, 80%, 50%)" />
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
@@ -123,45 +129,7 @@ const Reports = () => {
         </TabsContent>
 
         <TabsContent value="payments">
-          <Card>
-            <CardHeader>
-              <CardTitle>Student Payment Status</CardTitle>
-              <CardDescription>Overview of current payment statuses</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer
-                config={{
-                  value: {
-                    label: "Percentage",
-                    color: "hsl(32, 80%, 50%)",
-                  },
-                }}
-                className="h-[400px]"
-              >
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={paymentStatus}
-                      dataKey="value"
-                      nameKey="status"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={150}
-                      fill="hsl(32, 80%, 50%)"
-                      label
-                    />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-              <div className="flex justify-end mt-4">
-                <Button variant="outline" onClick={() => downloadReport("Payments")}>
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Report
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <PaymentsReport revenueTrend={revenueTrend} studentsWithStatus={studentsWithStatus} paymentStatus={paymentStatus} />
         </TabsContent>
 
         <TabsContent value="expenses">

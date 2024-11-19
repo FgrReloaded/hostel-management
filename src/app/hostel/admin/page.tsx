@@ -292,7 +292,7 @@ export default function OwnerDashboard() {
         )
       case "reports":
         return (
-          <Reports />
+          <Reports revenueTrend={revenueTrend} studentsWithStatus={studentsWithStatus} />
         )
       case "history":
         return (
@@ -324,7 +324,8 @@ export default function OwnerDashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-3xl font-bold mb-6 text-indigo-800">{activeView.charAt(0).toUpperCase() + activeView.slice(1)}</h1>
+          <h2 className="md:text-4xl text-2xl whitespace-nowrap text-center font-extrabold absolute left-1/2 -translate-x-1/2  -top-12 text-indigo-800">Admin Portal</h2>
+          <h1 className="md:text-3xl text-xl font-bold mb-6 mt-12 text-indigo-800">{activeView.charAt(0).toUpperCase() + activeView.slice(1)}</h1>
           {renderView()}
         </motion.div>
       </div>

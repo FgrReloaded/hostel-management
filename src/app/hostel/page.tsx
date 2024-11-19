@@ -101,7 +101,7 @@ export default function StudentDashboard() {
         )
       case "history":
         return (
-          <History paymentHistory={paymentHistory}  studentRegistered={studentInfo?.isRegistered} />
+          <History paymentHistory={paymentHistory} studentRegistered={studentInfo?.isRegistered} />
         )
       case "profile":
         return (
@@ -125,7 +125,8 @@ export default function StudentDashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
         >
-          <h1 className="text-4xl font-bold mb-6 text-gray-800">{activeView.charAt(0).toUpperCase() + activeView.slice(1)}</h1>
+          <h2 className="md:text-4xl text-2xl whitespace-nowrap text-center font-extrabold absolute left-1/2 -translate-x-1/2  -top-12 text-indigo-800">Student Portal</h2>
+          <h1 className="md:text-4xl text-xl font-bold mb-6 text-gray-800">{activeView.charAt(0).toUpperCase() + activeView.slice(1)}</h1>
           {
             studentInfo && !studentInfo?.profileSetup &&
             <Alert variant={"destructive"} className="mb-4" >

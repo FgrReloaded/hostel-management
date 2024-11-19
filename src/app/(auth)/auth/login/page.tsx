@@ -17,6 +17,7 @@ import { Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { signIn } from "next-auth/react"
+import Image from "next/image"
 
 const StudentSchema = z.object({
     email: z.string().email('Missing email'),
@@ -59,6 +60,7 @@ export default function SignIn() {
                 onSubmit={form.handleSubmit(onSubmit)}
             >
                 <div className="flex flex-col items-center gap-2">
+                    <Image src="/logo.webp" width={100} height={100} alt="SBP Bhawan" />
                     <h1 className="text-2xl font-semibold">
                         SBP Bhawan
                     </h1>

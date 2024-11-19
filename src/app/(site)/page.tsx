@@ -17,7 +17,12 @@ import Testimonials from '@/components/Testimonials'
 
 export default function HostelLandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [scrollPosition, setScrollPosition] = useState(0)
+  const [, setScrollPosition] = useState(0)
+  const [sliderImages] = useState([
+    "/hostel.jpeg",
+    "/front.jpeg",
+  ]);
+  const [currentImage, setCurrentImage] = useState(0);
   const { data: session } = useSession()
   const navigate = useRouter();
 
@@ -40,11 +45,24 @@ export default function HostelLandingPage() {
     }
   }, [])
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((currentImage + 1) % sliderImages.length)
+    }, 2500)
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [currentImage, sliderImages])
+
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
-      <header className={`fixed w-full z-50 transition-all duration-300 ${scrollPosition > 50 ? 'bg-white shadow-md' : 'bg-transparent'}`}>
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <a href="#" className="text-2xl font-bold text-blue-600">Savitribai Phule Bhawan</a>
+      <header className={`fixed w-full z-50 transition-all duration-300 bg-white/10  backdrop-blur-lg`}>
+        <div className="container mx-auto px-4 py-1 flex justify-between items-center">
+          <div className='flex md:gap-4 gap-2 items-center relative'>
+            <Image src="/logo.webp" alt="Logo" width={80} height={80} objectFit="cover" />
+            <Link href="/" className="md:text-3xl text-xl font-bold text-blue-800">Savitribai Phule Bhawan</Link>
+          </div>
           {
             session ?
               <Link href={session.user?.role === "ADMIN" ? "/hostel/admin" : "/hostel"} className="hidden md:block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition-colors">
@@ -92,16 +110,17 @@ export default function HostelLandingPage() {
       </header>
 
       <section className="relative h-screen flex items-center justify-center text-white">
-        <div className="absolute inset-0 bg-black opacity-80 z-10"></div>
+        <div className="absolute inset-0 bg-black opacity-20 z-10"></div>
         <div className="absolute inset-0 z-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/hostel.jpeg"
+            src={sliderImages[currentImage]}
             alt="Hostel exterior"
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="relative z-20 text-center max-w-4xl mx-auto px-4">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">Experience Comfort and Community</h1>
+        <div className="relative z-20 text-center max-w-4xl mx-auto px-4 bg-transparent">
+          <h1 className="text-5xl md:text-7xl font-bold  mb-6 leading-tight">Experience Comfort and Community</h1>
           <p className="text-xl md:text-2xl mb-10 max-w-2xl mx-auto">Discover a home away from home at SBP Bhawan, where unforgettable memories and lifelong friendships await.</p>
           <Link href="/auth/register" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full text-lg transition-colors transform hover:scale-105">
             Register Now
@@ -189,9 +208,12 @@ export default function HostelLandingPage() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between md:flex-row flex-col gap-16 px-16">
             <div>
-              <h3 className="text-2xl font-bold mb-4">Savitribai Phule Bhawan</h3>
-              <p className="mb-4">Your home away from home, where adventures begin and memories are made.</p>
-              <div className="flex space-x-4">
+                <div className="flex items-center md:flex-row flex-col max-md:justify-center text-center mb-8 gap-4">
+                <Image src="/logo.webp" alt="Logo" width={100} height={100} objectFit="cover" />
+                <h3 className="text-2xl font-bold">Savitribai Phule Bhawan</h3>
+              </div>
+              <p className="mb-4 max-md:text-center">Your home away from home, where adventures begin and memories are made.</p>
+              <div className="flex space-x-4 max-md:justify-center">
                 <a href="#" className="text-white hover:text-blue-400 transition-colors">
                   <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
@@ -209,7 +231,7 @@ export default function HostelLandingPage() {
                 </a>
               </div>
             </div>
-            <div>
+            <div className='max-md:text-center'>
               <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
               <p className="mb-2">Savitribai Phule Bhawan, 100 Capacity Girls Hostel,</p>
               <p className="mb-2">Dr Bhimrao Ambedkar University,</p>
@@ -219,7 +241,7 @@ export default function HostelLandingPage() {
             </div>
           </div>
           <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-            <p>&copy; {new Date().getFullYear()} 1. Savitribai Phule Bhawan. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Savitribai Phule Bhawan. All rights reserved.</p>
           </div>
         </div>
       </footer>

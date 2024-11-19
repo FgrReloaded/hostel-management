@@ -25,7 +25,8 @@ export async function getAllStudents(): Promise<{ error: boolean; data?: Student
             createdAt: 'desc'
           },
         },
-      },
+      }
+      // TODO, Remove password
     });
 
     if (!students.length) {

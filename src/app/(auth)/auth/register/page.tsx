@@ -19,6 +19,7 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { createUser } from "@/actions/student/student"
 import { signIn } from "next-auth/react"
+import Image from "next/image"
 
 
 const CustomerSchema = z.object({
@@ -49,7 +50,7 @@ export default function SignUp() {
     const onSubmit = async (values: z.infer<typeof CustomerSchema>) => {
         try {
             setIsLoading(true);
-            const {error, msg} = await createUser(values);
+            const { error, msg } = await createUser(values);
             if (!error) {
                 await signIn("user", {
                     email: values.email,
@@ -76,7 +77,8 @@ export default function SignUp() {
                 onSubmit={form.handleSubmit(onSubmit)}
             >
                 <div className="flex flex-col items-center gap-2">
-                <h1 className="text-2xl font-semibold">
+                    <Image src="/logo.webp" width={100} height={100} alt="SBP Bhawan" />
+                    <h1 className="text-2xl font-semibold">
                         SBP Bhawan
                     </h1>
                     <p className="text-gray-500">Create a new account</p>

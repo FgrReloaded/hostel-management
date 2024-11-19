@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Eye, EyeOff } from "lucide-react"
 import { useState } from "react"
 import { signIn } from "next-auth/react"
+import Image from "next/image"
 
 const AdminSchema = z.object({
     email: z.string().email('Missing email'),
@@ -56,6 +57,7 @@ export default function AdminLogin() {
                 onSubmit={form.handleSubmit(onSubmit)}
             >
                 <div className="flex flex-col items-center gap-2">
+                    <Image src="/logo.webp" width={100} height={100} alt="SBP Bhawan" />
                     <h1 className="text-2xl font-semibold flex items-center">
                         SBP Bhawan
                         <span className="text-blue-500 text-sm ml-2">

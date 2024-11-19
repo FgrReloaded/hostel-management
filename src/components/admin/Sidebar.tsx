@@ -6,6 +6,7 @@ import { ExitIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
 import { PaymentHistoryProps } from "@/lib/types";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 const Sidebar = ({
   activeView,
@@ -62,7 +63,10 @@ const Sidebar = ({
         </div>
 
         <div className="p-6">
-          <h2 className="text-2xl text-center font-bold mb-6 mt-4 text-indigo-700">Savitribai Phule Bhawan</h2>
+          <div className="flex flex-col items-center">
+            <Image src="/logo.webp" alt="Logo" width={100} height={100} objectFit="cover" />
+          <h2 className="text-2xl text-center font-bold mb-4 mt-2 text-indigo-700">Savitribai Phule Bhawan</h2>
+          </div>
           <nav className="space-y-2">
             {[
               { icon: Home, label: "Overview", view: "overview" },

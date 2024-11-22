@@ -21,10 +21,8 @@ import qrImage from "../../images/qr.png"
 
 const Payment = ({ studentInfo }: { studentInfo: Student }) => {
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
-  const [uploadedImage, setUploadedImage] = useState<Record<string, string>>({
-    public_id: "",
-    secure_url: ""
-  });
+  const [uploadedImage, setUploadedImage] = useState<{ public_id: string; secure_url: string }[]>([]);
+
   const [referrenceNo, setReferrenceNo] = useState<string>("");
 
   const paymentDetails = {
@@ -34,20 +32,18 @@ const Payment = ({ studentInfo }: { studentInfo: Student }) => {
     },
     qr: qrImage,
     netBanking: {
-      accountNumber: "N/A",
-      ifscCode: "N/A",
-      accountName: "N/A"
+      bankName: "Indian Bank",
+      accountNumber: "7811666491",
+      ifscCode: "IDIB000K677",
+      accountName: "Samaj Kalyan Girls Hostel 100 Capacity"
     }
   };
 
   // @ts-expect-error-ignore
   const handleSuccess = (result) => {
     setUploadedImage(
-      {
-        public_id: result.info.public_id,
-        secure_url: result.info.secure_url
-      }
-    );
+      (prev) => [...prev, { public_id: result.info.public_id, secure_url: result.info.secure_url }]
+    )
   }
 
   const onUpload = async () => {
@@ -60,7 +56,7 @@ const Payment = ({ studentInfo }: { studentInfo: Student }) => {
     const { error, msg } = await createNewPayment({
       paymentMethod,
       referrenceNo,
-      screenshotImageUrl: uploadedImage.public_id,
+      screenshotImageUrl: uploadedImage,
       amount: studentInfo?.isRegistered ? studentInfo?.amountToPay : 6000
     });
 
@@ -70,10 +66,7 @@ const Payment = ({ studentInfo }: { studentInfo: Student }) => {
     }
     toast.success(msg);
 
-    setUploadedImage({
-      public_id: "",
-      secure_url: ""
-    });
+    setUploadedImage([]);
     setPaymentMethod(null);
 
   }
@@ -114,10 +107,11 @@ const Payment = ({ studentInfo }: { studentInfo: Student }) => {
                 </>
               )}
               {paymentMethod === 'qr' && (
-                <Image  src={paymentDetails.qr} width={250} height={250} alt="qr" />
+                <Image src={paymentDetails.qr} width={250} height={250} alt="qr" />
               )}
               {paymentMethod === 'netBanking' && (
                 <>
+                  <p><strong>Bank Name:</strong> {paymentDetails.netBanking.bankName}</p>
                   <p><strong>Account Number:</strong> {paymentDetails.netBanking.accountNumber}</p>
                   <p><strong>IFSC Code:</strong> {paymentDetails.netBanking.ifscCode}</p>
                   <p><strong>Account Name:</strong> {paymentDetails.netBanking.accountName}</p>
@@ -132,7 +126,7 @@ const Payment = ({ studentInfo }: { studentInfo: Student }) => {
                 {({ open }) => {
                   return (
                     <Button onClick={() => { open() }} className="w-full bg-gradient-to-tr from-violet-400 to-violet-500 hover:from-violet-500 hover:to-violet-600 text-white font-bold py-3 rounded-lg transition-all duration-300 transform">
-                      Upload Screenshot
+                      Upload Screenshots
                     </Button>
 
                   );
@@ -140,17 +134,21 @@ const Payment = ({ studentInfo }: { studentInfo: Student }) => {
               </CldUploadWidget>
               <div className="space-y-2">
                 <Label htmlFor="referrence-no">Referrence No</Label>
-                <Input type="text" id="referrence-no" className="w-full border border-gray-200 rounded-lg p-3" placeholder="Enter referrence number (If any)"
+                <Input type="text" id="referrence-no" className="w-full border border-gray-200 rounded-lg p-3" placeholder="Enter referrence number (For multiple transactions, separate by comma)"
                   value={referrenceNo}
                   onChange={(e) => setReferrenceNo(e.target.value)} />
               </div>
 
             </div>
             {
-              uploadedImage.secure_url ?
-                <div className="flex items-center  flex-col gap-2 space-x-2 text-green-600">
-                  <p className="text-sm">Screenshot uploaded successfully!</p>
-                  <Image src={uploadedImage.secure_url} alt="Uploaded Screenshot" width={150} height={150} />
+              uploadedImage.length > 0 ?
+                <div className="space-y-2">
+                  <Label>Uploaded Images</Label>
+                  <div className="flex space-x-2">
+                    {uploadedImage.map((image) => (
+                      <Image key={image.public_id} src={image.secure_url} width={100} height={100} alt="uploaded image" />
+                    ))}
+                  </div>
                 </div>
                 :
                 <div className="flex items-center space-x-2 text-amber-600">

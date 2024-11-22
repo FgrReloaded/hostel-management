@@ -4,9 +4,14 @@ import { auth } from "@/auth";
 import prisma from "@/lib/db";
 import { Payment } from "@prisma/client";
 
+interface imagesUrl {
+  public_id: string;
+  secure_url: string;
+}
+
 interface PaymentInterface {
   paymentMethod: string;
-  screenshotImageUrl: string;
+  screenshotImageUrl: imagesUrl[];
   amount: number;
   referrenceNo: string;
 }
@@ -92,10 +97,12 @@ export async function createNewPayment({
     }
 
     if (amount === 6000) {
+
       await prisma.payment.create({
         data: {
           studentId: session?.user.id,
           paymentMethod,
+          // @ts-expect-error-ignore
           screenshotImageUrl,
           amount,
           referrenceNo
@@ -107,6 +114,7 @@ export async function createNewPayment({
         data: {
           studentId: session?.user.id,
           paymentMethod,
+          // @ts-expect-error-ignore
           screenshotImageUrl,
           amount,
           month: new Date().getMonth() + 1,

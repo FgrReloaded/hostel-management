@@ -41,10 +41,15 @@ interface PaymentHistoryProps extends Payment {
   }
 }
 
+interface ImageUrlType {
+  public_id: string
+  secure_url: string
+}
+
 const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProps[] }) => {
   const [payments, setPayments] = useState(paymentHistory)
   const [selectedImage, setSelectedImage] = useState({
-    imageUrl: "",
+    imageUrl: [] as ImageUrlType[],
     referrenceNo: ""
   })
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -79,7 +84,7 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
     }
   }
 
-  const openImageDialog = (imageUrl: string, referrenceNo?: string) => {
+  const openImageDialog = (imageUrl: [], referrenceNo?: string) => {
     setSelectedImage({
       imageUrl,
       referrenceNo: referrenceNo || ""
@@ -224,29 +229,31 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
                   <TableCell>{payment.student.name}</TableCell>
                   <TableCell>₹{payment.amount}</TableCell>
                   <TableCell>{payment.paymentMethod}</TableCell>
-                  <TableCell>
-                    {payment.screenshotImageUrl ? (
+                  <TableCell >
+                    {/* @ts-expect-error-ignore */}
+                    {payment?.screenshotImageUrl?.length > 0 ? (
                       <CldImage
-                        src={payment.screenshotImageUrl}
+                        // @ts-expect-error-ignore
+                        src={payment?.screenshotImageUrl?.[0]?.public_id || ""}
                         alt="Payment Proof"
                         width={50}
                         height={50}
                         className="object-cover rounded-lg cursor-pointer"
                       />
-                    ) : (
-                      "No proof provided"
-                    )}
+                    )
+                      : (
+                        "No proof provided"
+                      )}
                   </TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      payment.status === "Paid" ? "bg-green-100 text-green-800" :
+                    <span className={`px-2 py-1 rounded-full text-xs ${payment.status === "Paid" ? "bg-green-100 text-green-800" :
                       payment.status === "Rejected" ? "bg-red-100 text-red-800" :
-                      "bg-yellow-100 text-yellow-800"
-                    }`}>
+                        "bg-yellow-100 text-yellow-800"
+                      }`}>
                       {payment.status}
                     </span>
                   </TableCell>
-                  <TableCell className='flex gap-2 items-center'>
+                  <TableCell>
                     {payment.status === "Pending" && (
                       <>
                         <Button onClick={() => updatePayment(payment.id, "reject")} variant="outline" className="mr-2">
@@ -258,6 +265,7 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
                       </>
                     )}
                     <Button onClick={() => openImageDialog(
+                      // @ts-expect-error-ignore
                       payment.screenshotImageUrl!,
                       payment.referrenceNo || ""
                     )} variant="outline" className="mr-2">
@@ -283,14 +291,22 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Payment Proof</AlertDialogTitle>
-            <AlertDialogDescription>
-              <CldImage
-                src={selectedImage.imageUrl}
-                alt="Payment Proof"
-                width={400}
-                height={400}
-                className="object-contain w-full h-full"
-              />
+            <AlertDialogDescription className='flex flex-col gap-4 items-center justify-center'>
+              {
+                selectedImage.imageUrl.map((image, idx) => {
+                  return (
+                    <CldImage
+                      key={idx}
+                      src={image.public_id}
+                      alt="Payment Proof"
+                      width={selectedImage.imageUrl.length > 1 ? 200 : 400}
+                      height={200}
+                      className="object-contain"
+                    />
+                  )
+                }
+                )
+              }
               <p className="text-gray-600 w-full border-b border-gray-200 pb-4">
                 Referrence No: {selectedImage.referrenceNo}
               </p>

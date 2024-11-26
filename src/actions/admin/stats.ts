@@ -4,8 +4,9 @@ import { auth } from "@/auth";
 import prisma from "@/lib/db";
 
 
-export async function getPaymentStats(): Promise<{ error: boolean; msg: string; data?: { totalRevenue: number | null, pendingPayments: number, previousMonthsRevenue: number[] | null }
- }> {
+export async function getPaymentStats(): Promise<{
+  error: boolean; msg: string; data?: { totalRevenue: number | null, pendingPayments: number, previousMonthsRevenue: number[] | null }
+}> {
   try {
     const session = await auth();
     if (!session || session?.user?.role !== "ADMIN") {
@@ -45,6 +46,9 @@ export async function getPaymentStats(): Promise<{ error: boolean; msg: string; 
             createdAt: {
               gte: start,
               lt: end
+            },
+            amount: {
+              not: 6000
             },
             status: "Paid"
           },

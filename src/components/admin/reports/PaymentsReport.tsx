@@ -169,7 +169,7 @@ export default function PaymentsReport({ revenueTrend, paymentStatus, studentsWi
                 {unpaidStudents.map(student => (
                   <TableRow key={student.id}>
                     <TableCell className="font-medium">{student.name}</TableCell>
-                    <TableCell>₹{student.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                    <TableCell>₹{student.amountToPay.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

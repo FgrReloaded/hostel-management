@@ -300,7 +300,7 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
                         key={idx}
                         src={image.public_id}
                         alt="Payment Proof"
-                        width={selectedImage.imageUrl.length > 1 ? 200 : 400}
+                        width={200}
                         height={200}
                         className="object-contain"
                       />

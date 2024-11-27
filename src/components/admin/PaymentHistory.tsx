@@ -292,21 +292,24 @@ const PaymentHistory = ({ paymentHistory }: { paymentHistory: PaymentHistoryProp
           <AlertDialogHeader>
             <AlertDialogTitle>Payment Proof</AlertDialogTitle>
             <AlertDialogDescription className='flex flex-col gap-4 items-center justify-center'>
-              {
-                selectedImage.imageUrl.map((image, idx) => {
-                  return (
-                    <CldImage
-                      key={idx}
-                      src={image.public_id}
-                      alt="Payment Proof"
-                      width={selectedImage.imageUrl.length > 1 ? 200 : 400}
-                      height={200}
-                      className="object-contain"
-                    />
+              <div className='flex gap-4 my-2 md:w-full w-4/5 justify-center '>
+                {
+                  selectedImage.imageUrl.map((image, idx) => {
+                    return (
+                      <CldImage
+                        key={idx}
+                        src={image.public_id}
+                        alt="Payment Proof"
+                        width={selectedImage.imageUrl.length > 1 ? 200 : 400}
+                        height={200}
+                        className="object-contain"
+                      />
+                    )
+                  }
                   )
                 }
-                )
-              }
+              </div>
+
               <p className="text-gray-600 w-full border-b border-gray-200 pb-4">
                 Referrence No: {selectedImage.referrenceNo}
               </p>

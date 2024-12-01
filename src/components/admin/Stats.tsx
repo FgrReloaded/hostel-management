@@ -25,8 +25,8 @@ const Stats = ({ students, studentsPaid, revenueTrend, overview }: {
 
   const paymentStatusData = useMemo(() => [
     { name: "Paid", value: studentsPaid },
-    { name: "Unpaid", value: students.length - studentsPaid },
-  ], [studentsPaid, students.length])
+    { name: "Unpaid", value: students?.length - studentsPaid },
+  ], [studentsPaid, students?.length])
 
   const COLORS = ["#4F46E5", "#EF4444"]
 
@@ -36,8 +36,8 @@ const Stats = ({ students, studentsPaid, revenueTrend, overview }: {
         {[
           { title: "Total Revenue", icon: IndianRupee, value: `₹${overview.totalRevenue}`, description: "This month" },
           { title: "Pending Payments", icon: Bell, value: overview.pendingPayments, description: "Students with due payments" },
-          { title: "Paid Students", icon: Users, value: studentsPaid, description: `Out of ${students.length}` },
-          { title: "Unpaid Students", icon: AlertCircle, value: students.length - studentsPaid, description: "Requires attention" },
+          { title: "Paid Students", icon: Users, value: studentsPaid, description: `Out of ${students?.length}` },
+          { title: "Unpaid Students", icon: AlertCircle, value: students?.length - studentsPaid, description: "Requires attention" },
         ].map((item, index) => (
           <motion.div key={index} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Card className="bg-white hover:shadow-lg transition-shadow duration-300">

@@ -18,14 +18,14 @@ export function useUserProfile() {
           if (profile.data) {
             setUserProfile(profile.data)
           }
-      } catch (error) {
-        console.error('Error fetching user profile:', error)
+        } catch (error) {
+          console.error('Error fetching user profile:', error)
+        }
       }
     }
-  }
 
     fetchUserProfile()
   }, [status, userProfile, setUserProfile])
 
-return { userProfile, isLoading: status === 'loading' }
+  return { userProfile, isLoading: status === 'loading' }
 }

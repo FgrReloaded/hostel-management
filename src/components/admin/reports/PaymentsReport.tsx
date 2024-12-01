@@ -1,45 +1,85 @@
-"use client"
+"use client";
 
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from '@/components/ui/button'
-import { Download, Calendar } from 'lucide-react'
-import { Payment, Student } from "@prisma/client"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
-import { useRef } from 'react'
+import { useState, useRef, useMemo } from "react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import {
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer
+} from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent
+} from "@/components/ui/chart";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Download, Calendar } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useStudents } from "@/hooks/useStudents";
 
-interface StudentWithPayments extends Student {
-  status: string;
-  amount: number;
-  payments: Payment[];
-}
 
 interface PaymentsReportProps {
-  paymentStatus: {
-    status: string
-    value: number
-  }[]
-  studentsWithStatus: StudentWithPayments[]
   revenueTrend: {
-    month: string
-    revenue: number
-  }[]
+    month: string;
+    revenue: number;
+  }[];
 }
 
-export default function PaymentsReport({ revenueTrend, paymentStatus, studentsWithStatus }: PaymentsReportProps) {
-  const COLORS = ["#078080", "#ff8e3c"]
-  const reportRef = useRef<HTMLDivElement>(null)
+export default function PaymentsReport({ revenueTrend }: PaymentsReportProps) {
+  const COLORS = ["#078080", "#ff8e3c"];
+  const reportRef = useRef<HTMLDivElement>(null);
+  const { students } = useStudents();
 
-  const paidStudents = studentsWithStatus?.filter(student => student.status === 'Paid')
-  const unpaidStudents = studentsWithStatus?.filter(student => student.status === 'Unpaid')
+  const today = new Date();
+  const thisMonth = today.toLocaleString("default", { month: "short" });
+  const formattedDate = today.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
-  const today = new Date()
-  const thisMonth = today.toLocaleString('default', { month: 'short' })
-  const formattedDate = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-  const revenueTrendThisMonth = revenueTrend?.find((revenue: { month: string; revenue: number }) => revenue.month === thisMonth)?.revenue
+  const [selectedMonth, setSelectedMonth] = useState({
+    month: thisMonth,
+    year: today.getFullYear(),
+    monthNumber: today.getMonth() + 1,
+  });
+
+  const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedMonth = event.target.value;
+    const selectedYear = today.getFullYear();
+    const monthNumber = new Date(`${selectedMonth} ${selectedYear}`).getMonth() + 1;
+    setSelectedMonth({ month: selectedMonth, year: selectedYear, monthNumber });
+  };
+
+  const studentsWithStatus = useMemo(() => {
+    return students?.map(student => {
+      const lastPayment = student.payments[0]
+      const isPaid = lastPayment &&
+        lastPayment.amount !== 6000 &&
+        lastPayment.month === selectedMonth.monthNumber &&
+        lastPayment.year === selectedMonth.year
+      return {
+        ...student,
+        status: isPaid ? lastPayment.status : 'Unpaid',
+        amount: lastPayment ? lastPayment.amount : 0
+      }
+    })
+  }, [students, selectedMonth.monthNumber, selectedMonth.year])
+
+  const paidStudents = studentsWithStatus?.filter(student => student.status === "Paid");
+  const unpaidStudents = studentsWithStatus?.filter(student => student.status === "Unpaid");
+
+  const paymentStatus = [
+    { status: "Paid", value: paidStudents?.length },
+    { status: "Unpaid", value: unpaidStudents?.length },
+  ];
+
+  const revenueTrendThisMonth = revenueTrend.find((revenue) => revenue.month === selectedMonth.month)?.revenue;
 
   const handlePrint = async () => {
     const reportElement = reportRef.current;
@@ -57,8 +97,8 @@ export default function PaymentsReport({ revenueTrend, paymentStatus, studentsWi
       let position = 0;
 
       while (heightLeft > 0) {
-        const canvasPage = document.createElement('canvas');
-        const ctx = canvasPage.getContext('2d');
+        const canvasPage = document.createElement("canvas");
+        const ctx = canvasPage.getContext("2d");
 
         canvasPage.width = canvas.width;
         canvasPage.height = Math.min(heightLeft, (pageHeight - 2 * margin) * canvas.width / imgWidth);
@@ -75,10 +115,10 @@ export default function PaymentsReport({ revenueTrend, paymentStatus, studentsWi
           canvasPage.height
         );
 
-        const pageImgData = canvasPage.toDataURL('image/png');
+        const pageImgData = canvasPage.toDataURL("image/png");
 
         const currentImgHeight = (canvasPage.height * imgWidth) / canvas.width;
-        pdf.addImage(pageImgData, 'PNG', margin, margin, imgWidth, currentImgHeight);
+        pdf.addImage(pageImgData, "PNG", margin, margin, imgWidth, currentImgHeight);
 
         heightLeft -= canvasPage.height;
         position += canvasPage.height;
@@ -88,25 +128,37 @@ export default function PaymentsReport({ revenueTrend, paymentStatus, studentsWi
         }
       }
 
-      pdf.save(`${thisMonth}-report.pdf`);
+      pdf.save(`${selectedMonth}-report.pdf`);
     }
   };
-
 
   return (
     <Card className="w-full max-w-6xl" ref={reportRef}>
       <CardHeader className="text-center">
-        <CardTitle className="text-3xl font-bold text-primary mb-2">100 Capacity Girls Hostel Monthly Report: {thisMonth}</CardTitle>
+        <CardTitle className="text-3xl font-bold text-primary mb-2">
+          100 Capacity Girls Hostel Monthly Report: {selectedMonth.month} {selectedMonth.year}
+        </CardTitle>
         <CardDescription className="text-lg flex items-center justify-center">
           <Calendar className="mr-2 h-5 w-5" />
           {formattedDate}
         </CardDescription>
+        <select
+          value={selectedMonth.month}
+          onChange={handleMonthChange}
+          className="mt-4 p-2 border rounded-md text-primary"
+        >
+          {revenueTrend.map(({ month }) => (
+            <option key={month} value={month}>
+              {month}
+            </option>
+          ))}
+        </select>
       </CardHeader>
       <CardContent className="space-y-8">
         <div className="flex justify-center max-md:flex-col gap-8 items-center bg-primary/10 rounded-md">
           <div className="bg-primary/10 p-6 rounded-lg md:ml-4 max-md:mt-4">
-            <h3 className="text-xl font-semibold text-primary mb-2">Revenue for {thisMonth}</h3>
-            <p className="text-4xl font-bold text-primary">₹{revenueTrendThisMonth?.toLocaleString('en-IN')}</p>
+            <h3 className="text-xl font-semibold text-primary mb-2">Revenue for {selectedMonth.month}</h3>
+            <p className="text-4xl font-bold text-primary">₹{revenueTrendThisMonth?.toLocaleString("en-IN")}</p>
           </div>
           <ChartContainer
             config={{
@@ -128,23 +180,6 @@ export default function PaymentsReport({ revenueTrend, paymentStatus, studentsWi
                   fill="#8884d8"
                   dataKey="value"
                   nameKey="status"
-                  label={({ cx, cy, midAngle, innerRadius, outerRadius, value, index }) => {
-                    const RADIAN = Math.PI / 180
-                    const radius = 25 + innerRadius + (outerRadius - innerRadius)
-                    const x = cx + radius * Math.cos(-midAngle * RADIAN)
-                    const y = cy + radius * Math.sin(-midAngle * RADIAN)
-                    return (
-                      <text
-                        x={x}
-                        y={y}
-                        fill={COLORS[index % COLORS.length]}
-                        textAnchor={x > cx ? 'start' : 'end'}
-                        dominantBaseline="central"
-                      >
-                        {paymentStatus[index].status} ({value})
-                      </text>
-                    )
-                  }}
                 >
                   {paymentStatus.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -155,9 +190,10 @@ export default function PaymentsReport({ revenueTrend, paymentStatus, studentsWi
             </ResponsiveContainer>
           </ChartContainer>
         </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <h3 className="text-xl font-semibold mb-4 text-primary">Unpaid Students</h3>
+            <h3 className="text-xl font-semibold mb-4 text-primary">Unpaid Students ({unpaidStudents?.length})</h3>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -166,7 +202,7 @@ export default function PaymentsReport({ revenueTrend, paymentStatus, studentsWi
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {unpaidStudents.map(student => (
+                {unpaidStudents?.map(student => (
                   <TableRow key={student.id}>
                     <TableCell className="font-medium">{student.name}</TableCell>
                     <TableCell>₹{student.amountToPay.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
@@ -176,7 +212,7 @@ export default function PaymentsReport({ revenueTrend, paymentStatus, studentsWi
             </Table>
           </div>
           <div>
-            <h3 className="text-xl font-semibold mb-4 text-primary">Paid Students</h3>
+            <h3 className="text-xl font-semibold mb-4 text-primary">Paid Students ({paidStudents?.length})</h3>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -185,7 +221,7 @@ export default function PaymentsReport({ revenueTrend, paymentStatus, studentsWi
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paidStudents.map(student => (
+                {paidStudents?.map(student => (
                   <TableRow key={student.id}>
                     <TableCell className="font-medium">{student.name}</TableCell>
                     <TableCell>₹{student.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
@@ -208,5 +244,5 @@ export default function PaymentsReport({ revenueTrend, paymentStatus, studentsWi
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

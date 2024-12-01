@@ -12,7 +12,7 @@ import { getAllPayments } from "@/actions/payments/payment"
 import { toast } from "sonner"
 import { useRouter, useSearchParams } from "next/navigation"
 import RegistrationRequest from "@/components/admin/RegistrationRequests"
-import { getAllStudents, updateAmount, updateFees, updateRoom } from "@/actions/admin/student"
+import { updateAmount, updateFees, updateRoom } from "@/actions/admin/student"
 import SettingsPage from "@/components/admin/Settings"
 import Stats from "@/components/admin/Stats"
 import { getPaymentStats } from "@/actions/admin/stats"
@@ -30,6 +30,7 @@ import { Input } from "@/components/ui/input"
 import StudentDetails from "@/components/admin/StudentDetails"
 import { PaymentHistoryProps } from "@/lib/types"
 import Sidebar from "@/components/admin/Sidebar"
+import { useStudents } from "@/hooks/useStudents"
 
 
 interface StudentWithPayments extends StudentType {
@@ -52,7 +53,6 @@ export default function OwnerDashboard() {
   const [activeView, setActiveView] = useState("overview")
   const [selectedStudent, setSelectedStudent] = useState<StudentWithPayments | null>(null)
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryProps[]>([]);
-  const [students, setStudents] = useState<StudentWithPayments[]>([]);
   const [countRegistrationRequest, setCountRegistrationRequest] = useState(0);
   const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false);
   const [isFeeAmountDialogOpen, setIsFeeAmountDialogOpen] = useState(false);
@@ -75,6 +75,7 @@ export default function OwnerDashboard() {
   const [revenueTrend, setRevenueTrend] = useState<{ month: string; revenue: number }[]>([])
   const [registrationRequests, setRegistrationRequests] = useState<RegistrationRequestTypeWithStudent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { setStudents, students } = useStudents()
 
 
   const currentDate = useMemo(() => new Date(), [])
@@ -82,7 +83,7 @@ export default function OwnerDashboard() {
   const currentYear = useMemo(() => currentDate.getFullYear(), [currentDate])
 
   const studentsWithStatus = useMemo(() => {
-    return students.map(student => {
+    return students?.map(student => {
       const lastPayment = student.payments[0]
       const isPaid = lastPayment &&
         lastPayment.amount === student.amountToPay &&
@@ -97,7 +98,7 @@ export default function OwnerDashboard() {
   }, [students, currentMonth, currentYear])
 
 
-  const studentsPaid = useMemo(() => studentsWithStatus.filter(s => s.status === "Paid").length, [studentsWithStatus]) as number
+  const studentsPaid = useMemo(() => studentsWithStatus?.filter(s => s.status === "Paid").length, [studentsWithStatus]) as number
 
   useEffect(() => {
     const view = searchParams.get("view")
@@ -120,19 +121,6 @@ export default function OwnerDashboard() {
         return;
       }
       setPaymentHistory(data);
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      const { error, data } = await getAllStudents();
-      if (error) {
-        return;
-      }
-      if (!data) return;
-      // @ts-expect-error-ignore
-      setStudents(data);
-
     })();
   }, []);
 
@@ -204,7 +192,9 @@ export default function OwnerDashboard() {
     if (error) {
       toast.error(msg);
     } else {
+      // @ts-expect-error-ignore
       setStudents(prev => {
+      // @ts-expect-error-ignore
         const updatedStudents = prev.map(student => {
           if (student.id === selectedStudent?.id) {
             student.roomNumber = assignedRoom;
@@ -238,7 +228,9 @@ export default function OwnerDashboard() {
     if (error) {
       toast.error(msg);
     } else {
+      // @ts-expect-error-ignore
       setStudents(prev => {
+      // @ts-expect-error-ignore
         const updatedStudents = prev.map(student => {
           if (student.id === selectedStudent?.id) {
             student.amountToPay = dayPresent * 200;
@@ -284,15 +276,15 @@ export default function OwnerDashboard() {
     switch (activeView) {
       case "overview":
         return (
-          <Stats studentsPaid={studentsPaid} students={students} overview={overview} revenueTrend={revenueTrend} />
+          <Stats studentsPaid={studentsPaid} students={students ?? []} overview={overview} revenueTrend={revenueTrend} />
         )
       case "students":
         return (
-          <Student setActiveView={setActiveView} studentsWithStatus={studentsWithStatus} setSelectedStudent={setSelectedStudent} />
+          <Student setActiveView={setActiveView} studentsWithStatus={studentsWithStatus ?? []} setSelectedStudent={setSelectedStudent} />
         )
       case "reports":
         return (
-          <Reports revenueTrend={revenueTrend} studentsWithStatus={studentsWithStatus} />
+          <Reports revenueTrend={revenueTrend}  />
         )
       case "history":
         return (

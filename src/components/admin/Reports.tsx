@@ -4,32 +4,17 @@ import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Payment, Student } from "@prisma/client"
 import PaymentsReport from "@/components/admin/reports/PaymentsReport"
 
-
-interface StudentWithPayments extends Student {
-  status: string;
-  amount: number;
-  payments: Payment[];
-}
-
-
 interface ReportsProp {
-  studentsWithStatus: StudentWithPayments[]
   revenueTrend: { month: string; revenue: number }[]
 }
 
-
-const Reports = ({ studentsWithStatus, revenueTrend }: ReportsProp) => {
+const Reports = ({  revenueTrend }: ReportsProp) => {
   const downloadReport = (reportName: string) => {
     console.log(`Downloading ${reportName} report...`)
   }
 
-  const paymentStatus = [
-    { status: "Paid", value: studentsWithStatus.filter((student) => student.status === "Paid").length },
-    { status: "Unpaid", value: studentsWithStatus.filter((student) => student.status === "Unpaid").length },
-  ]
 
   return (
     <div className="space-y-8">
@@ -75,7 +60,7 @@ const Reports = ({ studentsWithStatus, revenueTrend }: ReportsProp) => {
         </TabsContent>
 
         <TabsContent value="payments">
-          <PaymentsReport revenueTrend={revenueTrend} studentsWithStatus={studentsWithStatus} paymentStatus={paymentStatus} />
+          <PaymentsReport revenueTrend={revenueTrend}  />
         </TabsContent>
 
       </Tabs>
